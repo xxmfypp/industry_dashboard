@@ -9,8 +9,9 @@
 <html>
 <head>
     <title>Title</title>
+    <script src="${contextPath}/resource/lib/jquery/dist/core.js"/>
 </head>
 <body>
-hello
+hello888
 </body>
 </html>

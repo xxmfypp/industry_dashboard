@@ -2,6 +2,7 @@ package cc.gavin.grumman.zeta.util;
 
 import cc.gavin.grumman.zeta.controller.IndexController;
 import com.jfinal.config.*;
+import com.jfinal.ext.handler.ContextPathHandler;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.activerecord.tx.TxByRegex;
@@ -34,6 +35,7 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 	public void configHandler(Handlers arg0) {
 		// TODO Auto-generated method stub
 		arg0.add(new DruidStatViewHandler("/druid"));
+		arg0.add(new ContextPathHandler("contextPath"));
 	}
 
 	@Override
@@ -63,7 +65,7 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 	@Override
 	public void configRoute(Routes arg0) {
 		// TODO Auto-generated method stub
-		arg0.add("/",IndexController.class);
+		arg0.add("/",IndexController.class,"/WEB-INF/view/");
 	}
 
 
