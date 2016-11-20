@@ -18,9 +18,9 @@
 <%@ include file="/WEB-INF/view/common/header.jsp"%>
 
 <div class="layout">
-    <div class="layout-left" id="main-menu-cot">
+<%--    <div class="layout-left" id="main-menu-cot">
 
-    </div>
+    </div>--%>
     <div class="layout-main">
         <div class="loading-status"></div>
         <div id="module-page-container" class="page-container">

@@ -21,6 +21,7 @@
     white-space: nowrap
 }
 .padding0{padding: 0!important;}
+.padding-left-0{padding-left: 0!important;}
 .ovh{overflow: hidden}
 .text-overflow{text-overflow: ellipsis;white-space: nowrap;overflow: hidden;}
 .text-shadow{

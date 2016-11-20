@@ -156,5 +156,9 @@ input[type="radio"], input[type="checkbox"]{
     position: static;
 }
 
+.modal-backdrop{
+    z-index: 100;
+}
+
 
 

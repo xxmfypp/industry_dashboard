@@ -111,63 +111,12 @@ define(function (require) {
 			return location.path + location.query + (location.hash ? "#" + location.hash : "");
 		}
 	});
-	/**
-	 * AlterPwdFormView
-	 *
-	 */
-	var AlterPwdFormView = ui.FormPopupView.extend({
-		template: "#common-alter-pwd-tpl",
-		name:"修改密码",
-		afterOpen:function(){
-			this.$(".js-popup-form").validate({
-				rules:{
-					newPwd:{
-						pwd:true
-					},
-					newPwd2:{
-						equalTo:"[name='newPwd']"
-					}
-				},
-				messages:{
-					newPwd2:{
-						equalTo:"两次密码输入不一致"
-					}
-				}
-			});
-			return this;
-		},
-		valid:function(defer){
-			if($(".js-popup-form").valid()){
-				defer.resolve({});
-			}
-		},
-		send:function(obj){
-			var ctx = this;
-			$(".js-popup-form").ajaxSubmit({
-				success:function(data){
-					if(Number(data.status) == 0){
-						ctx.trigger("send:success","修改成功");
-					}else{
-						ctx.trigger("send:error",data.msg);
-					}
-				},
-				error:function(msg,status){
-					ctx.trigger("send:error","修改失败");
-				}
-			});
-		},
-		onSendSuccess:function(){
-			util.successTip("成功提示","您的密码修改成功！ <a class='btn btn-link' href='"+ rs.apiRoot +"logout'>立刻登陆</a>",function(){
-				location.href = rs.apiRoot +"logout";
-			},3);
-		}
-	});
+
 	/**
 	 * MainApp
 	 */
 	var MainApp = Layout.extend({
 		events:{
-			"click .js-alter-pwd":"changePwd",
 			"click .js-logout-btn":"logout"
 		},
 		/**
@@ -213,7 +162,7 @@ define(function (require) {
 			subPage.set("path", path);
 		},
 		returnRoot: function () {
-			//this.changeUrl("index");
+			this.changeUrl("index");
 		},
 		toggleSpinning: _.throttle(function (dom, status) {
 			if (status === "loading") {
@@ -287,7 +236,7 @@ define(function (require) {
 				queryData = util.parseUrlParam(subPage.query),
 				container = $("#module-page-container");;
 			return rs.ajax({
-				url: rs.apiRoot + subPage.path,
+				url: rs.staticRoot + "/template/" + subPage.path + ".html",
 				data: queryData,
 				dataType: "text",
 				success: function (html) {
@@ -337,15 +286,9 @@ define(function (require) {
 				}, 100);
 			}
 		},
-		changePwd:function(){
-			new AlterPwdFormView({
-				title:"修改密码",
-				model:new Model({})
-			});
-		},
 		logout:function(){
 			util.confirm("操作确认","即将 <span class='text-danger'>安全退出</span>，是否继续？",function(){
-				location.replace(rs.apiRoot + "logout");
+				//location.replace(rs.apiRoot + "logout");
 			});
 		}
 	});

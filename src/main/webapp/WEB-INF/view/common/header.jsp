@@ -13,15 +13,21 @@
     <div class="logo dsib">
         泽它数据分析
     </div>
-    <ul class="dsib top-nav">
-        <li class="nav-item vertical-middle">
+    <div class="header-main justify">
+        <div class="dsib top-nav vertical-middle">
+            <a class="nav-item vertical-middle transition-2 active" href="javascript:;">
+                <div class="line transition-2"></div>
+                数据图表
+            </a>
+            <a class="nav-item vertical-middle transition-2"  href="javascript:;">
+                <div class="line transition-2"></div>
+                <span class="glyphicon glyphicon-upload"> </span>
+                上传数据
+            </a>
+        </div>
+        <div class="dsib vertical-middle">
+            <a class="glyphicon glyphicon-log-out js-logout-btn" href="javascript:;"></a>
+        </div>
+    </div>
 
-        </li>
-        <li class="nav-item vertical-middle">
-            <span class="icon">
-                <svg width="24px" height="24px" viewBox="0 0 48 48" fill="#757575"><path d="M18 32h12V20h8L24 6 10 20h8zm-8 4h28v4H10z"></path></svg>
-            </span>
-            上传数据
-        </li>
-    </ul>
 </header>
