@@ -4,6 +4,7 @@
 ;define(function (require) {
     var View = Backbone.View;
 
+    require("common/china");
     /**
      * App
      */
