@@ -8,6 +8,10 @@
   "main": "",
   "license": "MIT",
   "dependencies": {
-    "jquery": "~3.1.1"
+    "jquery": "~3.1.1",
+    "vue": "^2.0.5",
+    "underscore": "^1.8.3",
+    "seajs": "^3.0.0",
+    "animate.css": "^3.5.2"
   }
 }

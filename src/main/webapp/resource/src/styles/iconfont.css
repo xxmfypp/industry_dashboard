@@ -1,0 +1,104 @@
+
+@font-face {font-family: "iconfont";
+  src: url('../fonts/iconfont.eot?t=1467610406'); /* IE9*/
+  src: url('../fonts/iconfont.eot?t=1467610406#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('../fonts/iconfont.woff?t=1467610406') format('woff'), /* chrome, firefox */
+  url('../fonts/iconfont.ttf?t=1467610406') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('../fonts/iconfont.svg?t=1467610406#iconfont') format('svg'); /* iOS 4.1- */
+}
+
+.iconfont {
+  font-family:"iconfont" !important;
+  font-style:normal;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-stroke-width: 0.2px;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  top: -2px;
+}
+.icon-rmb:before{content: "\e608";}
+.icon-sys:before{content: "\e607";}
+.icon-pc:before{content: "\e619";}
+.icon-pc-small:before{content: "\e618";}
+.icon-manage:before{content: "\e606";}
+.icon-plus:before{content: "\e611";}
+.icon-edit:before{content: "\e61b";}
+.icon-right-status:before{content: "\e610";}
+.icon-audit:before{content: "\e605";}
+.icon-s:before{content: "\e604";}
+.icon-error-status:before{content: "\e613";}
+.icon-wrong-status:before{content: "\e612";}
+.icon-wrong-status-thin:before{content: "\e60f";}
+.icon-success:before{content: "\e60e";}
+.icon-error:before{content: "\e609";}
+.icon-face-sad:before{content: "\e60d";}
+.icon-arrows-right-round:before{content: "\e603";}
+.icon-arrows-right:before{content: "\e60a";}
+.icon-user-login:before{content: "\e615";}
+.icon-user-head:before{content: "\e601";}
+.icon-warning:before{content: "\e60c";}
+.icon-email:before{content: "\e602";}
+.icon-del:before{content: "\e61a";}
+.icon-qrcode:before{content: "\e617";}
+.icon-lock:before{content: "\e614";}
+.icon-time:before{content: "\e60b";}
+.icon-date:before{content: "\e61c";}
+.icon-question:before{content: "\e600";}
+.icon-search:before { content: "\e616"; }
+.icon-big-dot:before { content: "\e61d"; }
+.iconfont.icon-arrows-right-round{
+  top:3px;
+}
+.stamp.success-stamp,.stamp.fail-stamp{
+  margin-top: -1rem;
+  margin-left: -0.6rem;
+}
+.stamp.warning-stamp{
+  margin-left: -30px;
+}
+.success-stamp{
+  background-image: url("../images/success-stamp.png");
+  width:57px;
+  height: 44px;
+  position: absolute;
+}
+.fail-stamp{
+  background-image: url("../images/fail-stamp.png");
+  width:57px;
+  height: 44px;
+  position: absolute;
+}
+.warning-stamp{
+  background-image: url("../images/warning-stamp.png");
+  width:21px;
+  height: 18px;
+  position: absolute;
+}
+
+
+
+.help-tip{
+  position: absolute;
+  display: block;
+  text-align: center;
+  background-image: url("../images/que.png");
+  width: 20px;
+  height: 20px;
+  cursor: default;
+  margin-top: -17px;
+}
+
+.help-tip.grey{
+ /* background-color: rgba(0, 0, 0, 0.44);*/
+  background-image: url("../images/que.png");
+  width: 20px;
+  height: 20px;
+}
+/*.help-tip:before{
+  content:'?';
+  font-weight: bold;
+  color:#fff;
+}
+.help-tip.grey:before{
+  padding-left:6px;
+}*/

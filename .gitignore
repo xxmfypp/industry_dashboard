@@ -1,3 +1,6 @@
 .idea
 *.iml
+/*.log
 target
+.tmp
+node_modules
