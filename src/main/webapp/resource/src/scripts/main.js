@@ -37,62 +37,13 @@ define(function (require) {
 	 *
 	 */
 	var MenuView = View.extend({
-		events: {
-			"click .js-menu-handle": "toggleExpand",
-			"click .menu>.menu-item>.item-body": "toggleOpen"
-		},
 		initialize: function () {
-			this.status = "expand";
-			this.currentActiveSubMenu = null;
-		},
-		toggleExpand: function () {
-			this.status = this.$(".js-top-menu")
-					.toggleClass("expand collapsed")
-					.attr("class")
-					.match(/(?:expand)|(?:collapsed)/)[0];
-		},
-		toggleOpen: function (e) {
-			//$(e.currentTarget).toggleClass("open");
-			e.stopPropagation();
-			var
-				item = $(e.currentTarget).parent(),
-				isOpen = item.hasClass("open");
-			item[isOpen ? "removeClass" : "addClass"]("open")
-				.find(".sub-menu")[isOpen ? "slideUp" : "slideDown"](200);
-			//$(e.currentTarget).toggleClass("open").find(".sub-menu").slideToggle(200);
+
 		},
 		activeMenu: function (path) {
-			var item,curMenuId, menuId,willActiveSubMenu;
-			if (this.currentActiveSubMenu) {
-				curMenuId = this.currentActiveSubMenu.removeClass("active").attr("menu");
-			}
-			if (path) {
-				//路径 只取两层
-				path = path.split("/").slice(0, 2).join("/");
-				item = this.$(".sub-menu .item-body[href*='" + path + "']");
-				if (item.length) {
-					item.length > 1 && (item = item.filter(function(){return $(this).attr("href") == "#" + path}));
-					menuId = item.addClass("active").attr("menu");
-					if (curMenuId != menuId) {
-						//curMenuId && this.$(".menu>.menu-item[index='" + curMenuId + "']").removeClass("active open").find(".sub-menu").slideUp(200);
-						willActiveSubMenu = this.$(".menu>.menu-item[index='" + menuId + "']");
-						this.closeAllOpenedMenu(willActiveSubMenu[0]);
-						willActiveSubMenu
-								.addClass("active open")
-								.find(".sub-menu")[this.status == "expand"?"slideDown":"show"]();
-					}
-					this.currentActiveSubMenu = item;
-				}else{
-					this.currentActiveSubMenu = null;
-					this.closeAllOpenedMenu();
-				}
-			}
-		},
-		closeAllOpenedMenu:function(exclude){
-			this.$(".menu>.menu-item.open")
-					.filter(function(id,el){ return !exclude || el !== exclude})
-					.removeClass("active open")
-					.find(".sub-menu")[this.status == "expand"?"slideUp":"hide"]();
+            path == "index" && (path = "");
+				this.$(".nav-item.active").removeClass("active");
+				this.$(".nav-item[href='#"+path+"']").addClass("active");
 		}
 	});
 
@@ -125,7 +76,7 @@ define(function (require) {
 		initialize: function (options) {
 			this.router = new AppRouter();
 			this.menu = new MenuView({
-				el: $("#main-menu-cot")
+				el: $(".js-top-nav")
 			});
 			this.initSpinner();
 			this.listenTo(this.router, "change:url", this.changeUrl.bind(this));

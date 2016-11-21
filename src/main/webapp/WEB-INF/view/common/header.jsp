@@ -14,12 +14,12 @@
         泽它数据分析
     </div>
     <div class="header-main justify">
-        <div class="dsib top-nav vertical-middle">
-            <a class="nav-item vertical-middle transition-2 active" href="javascript:;">
+        <div class="dsib top-nav vertical-middle js-top-nav">
+            <a class="nav-item vertical-middle transition-2 active" href="#">
                 <div class="line transition-2"></div>
                 数据图表
             </a>
-            <a class="nav-item vertical-middle transition-2"  href="javascript:;">
+            <a class="nav-item vertical-middle transition-2"  href="#upload">
                 <div class="line transition-2"></div>
                 <span class="glyphicon glyphicon-upload"> </span>
                 上传数据
