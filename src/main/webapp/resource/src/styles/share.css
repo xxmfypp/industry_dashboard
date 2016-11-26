@@ -200,6 +200,10 @@
 .layout-main>.page-container{
     height: 100%;
 }
+.layout-main>.page-container>.main-wrap{
+    padding: 15px;
+    height: 100%;
+}
 .loading>.page-container{
     opacity: .4;
     -webkit-filter: blur(1px);

@@ -4,6 +4,7 @@
 <!-- bower:css -->
 <link href="${res}/lib/bootstrap-3.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 <link href="${res}/lib/bootstrap-3.3.0/dist/css/bootstrap-datetimepicker.min.css" rel="stylesheet"/>
+<link href="${res}/lib/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet"/>
 <!-- endbower -->
 <!-- endbuild -->
 

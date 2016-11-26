@@ -1,9 +1,155 @@
-<div class="container-fluid">
-    <form class="form">
-        <div class="form-group">
-            <div class="row">
-                <input type="file">
+<style>
+.upload{
+    max-width: 1084px;
+    width: calc(66.66% - 24px);
+    height: 100%;
+    margin: 0 auto;
+    font-size: 0;
+}
+.upload .upload-item{
+    position: relative;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 253px;
+    width: calc(25% - 18px);
+    padding: 10px;
+    margin-left: 24px;
+    margin-top: 24px;
+    height: 242px;
+    font-size: 1rem;
+    color: #6f6f6f;
+    background-color: #fff;
+    border-radius: 2px;
+    -webkit-box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+    box-shadow: 0 1px 4px 0 rgba(0,0,0,0.14);
+}
+.upload .upload-item:nth-child(4n+1){
+    margin-left: 0;
+}
+.upload .upload-item .btn-del{
+    position: absolute;
+    top: -2rem;
+    opacity: 0;
+    right: 10px;
+    color: #999;
+}
+.upload .upload-item .btn-del:hover{
+    color: #6f6f6f;
+}
+.upload .upload-item:hover{
+    -webkit-transform: scale(1.08);
+    -moz-transform: scale(1.08);
+    -ms-transform: scale(1.08);
+    -o-transform: scale(1.08);
+    transform: scale(1.08);;
+}
+.upload .upload-item:hover .btn-del{
+    top: 10px;
+    opacity: 1;
+}
+.upload .upload-item .middle-wrap{
+    align-items: center;
+    height: 100%;
+}
+.upload .upload-item .middle-wrap .text-center{
+    width: 100%;
+}
+.upload .upload-item .data-icon{
+    font-size: 4rem;
+    color: #12a0f4;
+}
+.upload .upload-item.file-action .data-icon{
+    color:#5bc0de;
+}
+
+.upload .upload-item .data-desc{
+    margin-top: 1.5rem;
+}
+.upload .upload-item.file-action .data-desc{
+    margin-top: 0;
+}
+.upload .file-action .file-input{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+.upload .file-action .progress{
+    margin: 0;
+}
+</style>
+
+<div class="container-fluid main-wrap">
+    <div class="upload">
+        <div class="upload-item transition-2 text-center">
+            <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    <span class="fa fa-database data-icon"></span><br>
+                    <p class="data-desc">用户数据.xlx</p>
+                </div>
             </div>
         </div>
-    </form>
+        <div class="upload-item transition-2 text-center">
+            <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    <span class="fa fa-database data-icon"></span><br>
+                    <p class="data-desc">用户数据1.xlx</p>
+                </div>
+            </div>
+        </div>
+        <div class="upload-item transition-2 text-center">
+            <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    <span class="fa fa-database data-icon"></span><br>
+                    <p class="data-desc">用户数据2.xlx</p>
+                </div>
+            </div>
+        </div>
+        <div class="upload-item transition-2 text-center">
+            <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    <span class="fa fa-database data-icon"></span><br>
+                    <p class="data-desc">用户数据3.xlx</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="upload-item transition-2 text-center file-action">
+            <form>
+                <input type="file" class="file-input">
+            </form>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    <span class="fa fa-plus data-icon"></span><br>
+                    <p class="data-desc">添加excel文件</p>
+                </div>
+            </div>
+
+        </div>
+        <div class="upload-item transition-2 text-center file-action">
+            <form>
+                <input type="file" class="file-input">
+            </form>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center">
+                    文件上传中
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                        <span class="sr-only">20% Complete</span>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>

@@ -15,8 +15,9 @@
     </div>
     <div class="header-main justify">
         <div class="dsib top-nav vertical-middle js-top-nav">
-            <a class="nav-item vertical-middle transition-2 active" href="#">
+            <a class="nav-item vertical-middle transition-2" href="#">
                 <div class="line transition-2"></div>
+                <span class="fa fa-bar-chart"></span>
                 数据图表
             </a>
             <a class="nav-item vertical-middle transition-2"  href="#upload">

@@ -51,7 +51,7 @@
 /*    margin-left: 15px;*/
     list-style: none;
 }
-.header .glyphicon{
+.header .glyphicon,.header .fa{
     width: 21px;
     height: 21px;
     line-height: 21px;
@@ -64,7 +64,8 @@
     font-size: 1rem;
     color: rgba(255,255,255,0.56);
 }
-.header .top-nav .nav-item .glyphicon{
+.header .top-nav .nav-item .glyphicon,
+.header .top-nav .nav-item .fa{
     color: inherit;
 }
 .header .top-nav .nav-item .line{
