@@ -68,6 +68,20 @@
             <version>${jfinal.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.10-FINAL</version>
+        </dependency>
+
+
+
         <!-- jfinal-ext -->
         <dependency>
             <groupId>com.jfinal</groupId>
