@@ -1,0 +1,55 @@
+{
+  "status":0,
+  "data":{
+    "userGender":{
+      "desc":"用户性别 - 饼状图",
+      "seriesData":[
+        {"name":"男","value":2172},
+        {"name":"女","value":2459},
+        {"name":"未知","value":13}
+      ]
+    },
+    "userBirth":{
+      "desc":"用户出生日期 - 柱状图",
+      "xAxisData":["1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990"],
+      "seriesData":[23,21,20,90,54,43,29,90,34,54,34]
+    },
+    "goodsCategory":{
+      "desc":"商品类别 - 环状图",
+      "xAxisData":["食谱","3C设备","饮食","电影","科技"],
+      "seriesData":[{"name":"食谱","value":344},
+        {"name":"3C设备","value":544},
+        {"name":"饮食","value":223},
+        {"name":"电影","value":653},
+        {"name":"科技","value":90}
+      ]
+    },
+    "priceDivide":{
+      "desc":"价格分布图 - 饼状图",
+      "seriesData":[{"name":"1万以下","value":344},
+        {"name":"1万-5万","value":544},
+        {"name":"5万-10万","value":223},
+        {"name":"10万以上","value":653}
+      ]
+    },
+    "collectTop5":{
+      "desc":"收藏记录 - 柱状图",
+      "xAxisData":["食谱","3C设备","饮食","电影","科技"],
+      "seriesData":[58,38,26,19,11]
+    },
+    "orderPriceTrend":{
+      "desc":"订单金额走势 - 折线图",
+      "xAxisData":["1985","1986","1987","1988","1989","1990"],
+      "seriesData":[43,29,90,34,54,34]
+    },
+    "orderAreaNum":{
+      "desc":"订单区域数量 - 地图",
+      "seriesData":[
+        {"name": "上海","value": 10089 },
+        {"name": "重庆","value": 9810},
+        {"name": "河北","value": 7645 },
+        {"name": "河南","value": 1508}
+      ]
+    }
+  }
+}

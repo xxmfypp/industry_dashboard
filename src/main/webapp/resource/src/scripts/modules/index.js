@@ -10,26 +10,230 @@
      */
     var App = View.extend({
         initialize:function () {
-            this.initChart()
+            //this.initChart();
+            this.getData().then(function (resp) {
+
+                this.data = resp.data;
+                this.initChart();
+            }.bind(this),function () {
+
+            }.bind(this)).always(function () {
+
+            }.bind(this))
+        },
+        getData:function () {
+            return $.ajax({
+                isSelfErrorTip:true,
+                type:"get",
+                dataType:"json",
+                //url:rs.apiRoot + "charts/index"
+                url:rs.apiRoot + "resource/src/mockData/charts.json"
+            });
         },
         //模拟数据
         initChart:function () {
-            this.chart1();
-            this.chart2();
-            this.chart3();
-            this.chart4();
+
+
+           // this.chart1();
+            //this.chart2();
+            //this.chart3();
+            //this.chart4();
+
+            this.chartUser();
+            this.chartGoodsCategory();
+            this.chartPriceDivide();
+            this.chartCollectTop5();
+            this.chartOrderPriceTrend();
+            this.chartOrderAreaNum();
         },
-        chart1:function () {
-            this.chart1 = echarts.init(this.$(".chart-item:eq(0)")[0]);
-            this.chart1.setOption({
+        chartUser:function () {
+            var userBirth = this.data.userBirth,
+            userGender = this.data.userGender;
+            this.chartUser = echarts.init(this.$(".js-user")[0]);
+            this.chartUser.setOption({
                 title: {
-                    text: '堆叠区域图'
+                    text: '用户数据'
+                },
+                legend:{
+                    data:["性别","出生日期"]
+                },
+                color: ['#5ab1ef','#ffb980','#b6a2de'],
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        axisTick: {
+                            alignWithLabel: true
+                        },
+                        data : userBirth.xAxisData
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'性别',
+                        type:'pie',
+                        tooltip : {
+                            trigger: 'item',
+                            formatter: '{a} <br/>{b} : {c} ({d}%)'
+                        },
+                        center: [160,130],
+                        radius : [0, 50],
+                        itemStyle :　{
+                            normal : {
+                                labelLine : {
+                                    length : 20
+                                }
+                            }
+                        },
+                        data:userGender.seriesData
+                    },
+                    {
+                        name:'出生日期',
+                        type:'bar',
+                        areaStyle: {normal: {}},
+                        data:userBirth.seriesData
+                    }
+                ]
+            })
+        },
+        chartGoodsCategory:function () {
+            var goodsCategory = this.data.goodsCategory;
+            this.chartGoodsCategory = echarts.init(this.$(".js-goodsCategory")[0]);
+            this.chartGoodsCategory.setOption({
+                title: {
+                    text: '商品类别'
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b}: {c} ({d}%)"
+                },
+                series: [
+                    {
+                        name:'商品类别',
+                        type:'pie',
+                        radius: ['50%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                            normal: {
+                                show: true,
+                                position: ''
+                            },
+                            emphasis: {
+                                show: true,
+                                textStyle: {
+                                    fontSize: '30',
+                                    fontWeight: 'bold'
+                                }
+                            }
+                        },
+                        labelLine: {
+                            normal: {
+                                show: true
+                            }
+                        },
+                        data:goodsCategory.seriesData
+                    }
+                ]
+            })
+        },
+        chartPriceDivide:function () {
+            var priceDivide = this.data.priceDivide;
+            this.chartPriceDivide = echarts.init(this.$(".js-priceDivide")[0]);
+            this.chartPriceDivide.setOption({
+                title : {
+                    text: '价格分布'
+                },
+                tooltip : {
+                    trigger: 'item',
+                    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                },
+                series : [
+                    {
+                        name: '价格分布',
+                        type: 'pie',
+                        radius : '55%',
+                        center: ['50%', '60%'],
+                        data:priceDivide.seriesData,
+                        itemStyle: {
+                            emphasis: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            })
+        },
+        chartCollectTop5:function () {
+            var collectTop5 = this.data.collectTop5;
+            this.chartCollectTop5 = echarts.init(this.$(".js-collectTop5")[0]);
+            this.chartCollectTop5.setOption({
+                title : {
+                    text: '收藏记录Top5'
+                },
+                color: ['#3398DB'],
+                tooltip : {
+                    trigger: 'axis',
+                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+                },
+                yAxis : [
+                    {
+                        type : 'category',
+                        data : collectTop5.xAxisData,
+                        axisTick: {
+                            alignWithLabel: true
+                        }
+                    }
+                ],
+                xAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series : [
+                    {
+                        name:'数量',
+                        type:'bar',
+                        barWidth: '60%',
+                        data:collectTop5.seriesData
+                    }
+                ]
+            })
+        },
+        chartOrderPriceTrend:function () {
+            var orderPriceTrend = this.data.orderPriceTrend;
+            this.chartOrderPriceTrend = echarts.init(this.$(".js-orderPriceTrend")[0]);
+            this.chartOrderPriceTrend.setOption({
+                title: {
+                    text: '订单价格走势'
                 },
                 tooltip : {
                     trigger: 'axis'
-                },
-                legend: {
-                    data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
                 },
                 toolbox: {
                     feature: {
@@ -46,7 +250,7 @@
                     {
                         type : 'category',
                         boundaryGap : false,
-                        data : ['周一','周二','周三','周四','周五','周六','周日']
+                        data :orderPriceTrend.xAxisData
                     }
                 ],
                 yAxis : [
@@ -56,48 +260,24 @@
                 ],
                 series : [
                     {
-                        name:'邮件营销',
+                        name:'价格',
                         type:'line',
                         stack: '总量',
                         areaStyle: {normal: {}},
-                        data:[120, 132, 101, 134, 90, 230, 210]
-                    },
-                    {
-                        name:'联盟广告',
-                        type:'line',
-                        stack: '总量',
-                        areaStyle: {normal: {}},
-                        data:[220, 182, 191, 234, 290, 330, 310]
-                    },
-                    {
-                        name:'视频广告',
-                        type:'line',
-                        stack: '总量',
-                        areaStyle: {normal: {}},
-                        data:[150, 232, 201, 154, 190, 330, 410]
+                        data:orderPriceTrend.seriesData
                     }
                 ]
             })
         },
-        chart2:function () {
-            function randomData() {
-                return Math.round(Math.random()*1000);
-            }
-
-            this.chart2 = echarts.init(this.$(".chart-item:eq(1)")[0]);
-            this.chart2.setOption({
+        chartOrderAreaNum:function () {
+            var orderAreaNum = this.data.orderAreaNum;
+            this.orderAreaNumChart = echarts.init(this.$(".js-orderAreaNum")[0]);
+            this.orderAreaNumChart.setOption({
                 title: {
-                    text: 'iphone销量',
-                    subtext: '纯属虚构',
-                    left: 'center'
+                    text: '订单区域分布'
                 },
                 tooltip: {
                     trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data:['iphone3','iphone4']
                 },
                 visualMap: {
                     min: 0,
@@ -120,7 +300,7 @@
                 },
                 series: [
                     {
-                        name: 'iphone3',
+                        name: '订单区域分布',
                         type: 'map',
                         mapType: 'china',
                         roam: false,
@@ -132,170 +312,7 @@
                                 show: true
                             }
                         },
-                        data:[
-                            {name: '北京',value: randomData() },
-                            {name: '天津',value: randomData() },
-                            {name: '上海',value: randomData() },
-                            {name: '重庆',value: randomData() },
-                            {name: '河北',value: randomData() },
-                            {name: '河南',value: randomData() },
-                            {name: '云南',value: randomData() },
-                            {name: '辽宁',value: randomData() },
-                            {name: '黑龙江',value: randomData() },
-                            {name: '湖南',value: randomData() },
-                            {name: '安徽',value: randomData() },
-                            {name: '山东',value: randomData() },
-                            {name: '新疆',value: randomData() },
-                            {name: '江苏',value: randomData() },
-                            {name: '浙江',value: randomData() },
-                            {name: '江西',value: randomData() },
-                            {name: '湖北',value: randomData() },
-                            {name: '广西',value: randomData() },
-                            {name: '甘肃',value: randomData() },
-                            {name: '山西',value: randomData() },
-                            {name: '内蒙古',value: randomData() },
-                            {name: '陕西',value: randomData() },
-                            {name: '吉林',value: randomData() },
-                            {name: '福建',value: randomData() },
-                            {name: '贵州',value: randomData() },
-                            {name: '广东',value: randomData() },
-                            {name: '青海',value: randomData() },
-                            {name: '西藏',value: randomData() },
-                            {name: '四川',value: randomData() },
-                            {name: '宁夏',value: randomData() },
-                            {name: '海南',value: randomData() },
-                            {name: '台湾',value: randomData() },
-                            {name: '香港',value: randomData() },
-                            {name: '澳门',value: randomData() }
-                        ]
-                    },
-                    {
-                        name: 'iphone4',
-                        type: 'map',
-                        mapType: 'china',
-                        label: {
-                            normal: {
-                                show: true
-                            },
-                            emphasis: {
-                                show: true
-                            }
-                        },
-                        data:[
-                            {name: '北京',value: randomData() },
-                            {name: '天津',value: randomData() },
-                            {name: '上海',value: randomData() },
-                            {name: '重庆',value: randomData() },
-                            {name: '河北',value: randomData() },
-                            {name: '安徽',value: randomData() },
-                            {name: '新疆',value: randomData() },
-                            {name: '浙江',value: randomData() },
-                            {name: '江西',value: randomData() },
-                            {name: '山西',value: randomData() },
-                            {name: '内蒙古',value: randomData() },
-                            {name: '吉林',value: randomData() },
-                            {name: '福建',value: randomData() },
-                            {name: '广东',value: randomData() },
-                            {name: '西藏',value: randomData() },
-                            {name: '四川',value: randomData() },
-                            {name: '宁夏',value: randomData() },
-                            {name: '香港',value: randomData() },
-                            {name: '澳门',value: randomData() }
-                        ]
-                    }
-                ]
-            })
-        },
-        chart3:function () {
-            this.chart3 = echarts.init(this.$(".chart-item:eq(2)")[0]);
-            this.chart3.setOption({
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{a} <br/>{b}: {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'vertical',
-                    x: 'left',
-                    data:['直达','营销广告','搜索引擎','邮件营销','联盟广告','视频广告','百度','谷歌','必应','其他']
-                },
-                series: [
-                    {
-                        name:'访问来源',
-                        type:'pie',
-                        selectedMode: 'single',
-                        radius: [0, '30%'],
-
-                        label: {
-                            normal: {
-                                position: 'inner'
-                            }
-                        },
-                        labelLine: {
-                            normal: {
-                                show: false
-                            }
-                        },
-                        data:[
-                            {value:335, name:'直达', selected:true},
-                            {value:679, name:'营销广告'},
-                            {value:1548, name:'搜索引擎'}
-                        ]
-                    },
-                    {
-                        name:'访问来源',
-                        type:'pie',
-                        radius: ['40%', '55%'],
-
-                        data:[
-                            {value:335, name:'直达'},
-                            {value:310, name:'邮件营销'},
-                            {value:234, name:'联盟广告'},
-                            {value:135, name:'视频广告'},
-                            {value:1048, name:'百度'},
-                            {value:251, name:'谷歌'},
-                            {value:147, name:'必应'},
-                            {value:102, name:'其他'}
-                        ]
-                    }
-                ]
-            })
-        },
-        chart4:function () {
-            this.chart4 = echarts.init(this.$(".chart-item:eq(3)")[0]);
-            this.chart4.setOption({
-                color: ['#3398DB'],
-                tooltip : {
-                    trigger: 'axis',
-                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                    }
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '3%',
-                    containLabel: true
-                },
-                xAxis : [
-                    {
-                        type : 'category',
-                        data : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        axisTick: {
-                            alignWithLabel: true
-                        }
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'value'
-                    }
-                ],
-                series : [
-                    {
-                        name:'直接访问',
-                        type:'bar',
-                        barWidth: '60%',
-                        data:[10, 52, 200, 334, 390, 330, 220]
+                        data:orderAreaNum.seriesData
                     }
                 ]
             })
