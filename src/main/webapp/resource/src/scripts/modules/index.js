@@ -2,7 +2,9 @@
  * Created by liwir_000 on 11/20/2016.
  */
 ;define(function (require) {
-    var View = Backbone.View;
+    var
+        View = Backbone.View,
+        util = require("util");
 
     require("common/china");
     /**
@@ -12,11 +14,19 @@
         initialize:function () {
             //this.initChart();
             this.getData().then(function (resp) {
-
+                //success
                 this.data = resp.data;
-                this.initChart();
-            }.bind(this),function () {
+                if(_.keys(this.data).length){
+                    this.initChart();
+                }else{
+                    util.alert("失败提示","你还<span class='text-danger'>没有上传</span>数据文件",function () {
+                        location.hash = "upload";
+                    },5);
+                }
 
+            }.bind(this),function (xhr,status) {
+                //error
+                util.alert("失败提示",status,null,5);
             }.bind(this)).always(function () {
 
             }.bind(this))
@@ -32,13 +42,6 @@
         },
         //模拟数据
         initChart:function () {
-
-
-           // this.chart1();
-            //this.chart2();
-            //this.chart3();
-            //this.chart4();
-
             this.chartUser();
             this.chartGoodsCategory();
             this.chartPriceDivide();

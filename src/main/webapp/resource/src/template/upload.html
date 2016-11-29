@@ -4,7 +4,8 @@
     width: calc(66.66% - 24px);
     height: 100%;
     margin: 0 auto;
-    font-size: 0;
+    /*font-size: 0;*/
+    justify-content: center;
 }
 .upload .upload-item{
     position: relative;
@@ -18,6 +19,7 @@
     margin-top: 24px;
     height: 242px;
     font-size: 1rem;
+    line-height: 1.4;
     color: #6f6f6f;
     background-color: #fff;
     border-radius: 2px;
@@ -81,11 +83,31 @@
 .upload .file-action .progress{
     margin: 0;
 }
+
+
+/*-----改动后的布局------*/
+.upload{
+    line-height: 70vh;
+}
+.upload .upload-item{
+    width: 200px;
+}
+.upload .fine-input {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    -ms-filter: 'alpha(opacity=0)';
+    cursor: pointer;
+}
 </style>
 
 <div class="container-fluid main-wrap">
-    <div class="upload">
-        <div class="upload-item transition-2 text-center">
+    <div class="upload text-center">
+        <!--<div class="upload-item transition-2 text-center">
             <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
             <div class="middle-wrap vertical-middle">
                 <div class="text-center">
@@ -121,7 +143,6 @@
                 </div>
             </div>
         </div>
-
         <div class="upload-item transition-2 text-center file-action">
             <form>
                 <input type="file" class="file-input">
@@ -149,7 +170,40 @@
                 </div>
             </div>
 
+        </div>-->
+        <div class="upload-item transition-2 text-center file-action">
+            <form enctype="multipart/form-data" class="js-upload-file-form" method="post"
+                  action="industry_dashboard/excel/upload">
+                <input type="file" class="fine-input js-upload-input" name="uploadFile"
+                       accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                       required
+                />
+            </form>
+            <div class="middle-wrap vertical-middle">
+                <div class="text-center js-select-tip">
+                    <span class="fa fa-plus data-icon"></span><br>
+                    <p class="data-desc">选择excel文件</p>
+                </div>
+                <div class="text-center js-progress-tip" style="display: none">
+                    <span class="js-progress-tip-txt">文件上传中...</span>
+                    <div class="progress ">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                            <span class="sr-only">20% Complete</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 </div>
+<script type="text/template" id="upload-item-tpl">
+    <div class="upload-item transition-2 text-center">
+        <a class="glyphicon glyphicon-remove transition-2 btn-del js-del" href="javascript:;"> </a>
+        <div class="middle-wrap vertical-middle">
+            <div class="text-center">
+                <span class="fa fa-database data-icon"></span><br>
+                <p class="data-desc">用户数据3.xlx</p>
+            </div>
+        </div>
+    </div>
+</script>

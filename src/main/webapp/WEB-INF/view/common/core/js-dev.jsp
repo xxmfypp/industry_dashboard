@@ -1,6 +1,6 @@
 <!--<%@ page contentType="text/html;charset=UTF-8" language="java" %>-->
 <!--[if lte IE 9]>
-<!-- build:js scripts/polyfill.js path=${root}-->
+<%--<!-- build:js scripts/polyfill.js path=${root}-->--%>
 <script src='${root}/scripts/polyfill/html5shiv.js'></script>
 <script src='${root}/scripts/polyfill/json3.min.js'></script>
 <script src='${root}/scripts/polyfill/es5-shim.min.js'></script>
@@ -9,7 +9,7 @@
 <script src='${root}/scripts/polyfill/calc.min.js'></script>
 <script src='${root}/scripts/polyfill/respond.src.js'></script>
 <script src='${root}/scripts/polyfill/placeholder-polyfill.js'></script>
-<!-- endbuild -->
+<%--<!-- endbuild -->--%>
 <![endif]-->
 <!--[if lte IE 8]>
 <script>
@@ -17,7 +17,6 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
 </script>
 <![endif]-->
 <!-- build:js lib/libs.js path=${root}-->
-<!-- bower:js -->
 <script src='${res}/lib/jquery/dist/jquery.min.js'></script>
 <script src='${res}/lib/bootstrap-3.3.0/dist/js/bootstrap.min.js'></script>
 <script src='${res}/lib/echarts/echarts.min.js'></script>
@@ -31,7 +30,6 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
 <script src='${res}/lib/jquery-form/jquery.form.js'></script>
 <script src='${res}/lib/spin/spin.min.js'></script>
 <script src='${res}/lib/seajs/dist/sea.js'></script>
-<!-- endbower -->
 <!-- endbuild -->
 
 <script type="text/javascript">
