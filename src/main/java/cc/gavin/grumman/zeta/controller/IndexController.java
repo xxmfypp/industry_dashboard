@@ -41,22 +41,23 @@ public class IndexController extends Controller {
         renderFile(fileName);
     }
 
-    public void upload_tmp(){
+    public void uploadEcl(){
         List<String> errMessage = new ArrayList<String>();
         try {
-
-            String filePath = "/home/user/Desktop/template.xlsx";
-            Map<String,List<Record>> map =  new HashMap<String, List<Record>>();
-            if (filePath.endsWith("xls")) {
-                ExcelUtil.readXls(filePath);
-            } else if (filePath.endsWith("xlsx")) {
-                map = ExcelUtil.readXlsx(filePath);
+            UploadFile uploadFile = getFile("uploadFile");
+            File excelFile = uploadFile.getFile();
+            String fileName = uploadFile.getFileName();
+            Map<String,List<Record>> excelMap =  new HashMap<String, List<Record>>();
+            if (fileName.endsWith("xls")) {
+                ExcelUtil.readXls(excelFile);
+            } else if (fileName.endsWith("xlsx")) {
+                excelMap = ExcelUtil.readXlsx(excelFile);
             }
 
-            List<Record> userInfos = map.get("用户信息");
-            List<Record> commodityInfos = map.get("商品信息");
-            List<Record> orderInfos = map.get("订单信息");
-            List<Record> collectionInfos = map.get("收藏信息");
+            List<Record> userInfos = excelMap.get("用户信息");
+            List<Record> commodityInfos = excelMap.get("商品信息");
+            List<Record> orderInfos = excelMap.get("订单信息");
+            List<Record> collectionInfos = excelMap.get("收藏信息");
 
             Db.update("delete from user_info");
             Db.update("delete from commodity_info");

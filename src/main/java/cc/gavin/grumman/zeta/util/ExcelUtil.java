@@ -1,6 +1,7 @@
 package cc.gavin.grumman.zeta.util;
 
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,12 +28,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public class ExcelUtil {
 
-    public static void main(String[] args) throws IOException {
-
-    }
-
-    public static void readXls(String filePath) throws IOException {
-        InputStream is = new FileInputStream(filePath);
+    public static void readXls(File file) throws IOException {
+        InputStream is = new FileInputStream(file);
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
 
         for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
@@ -55,9 +52,9 @@ public class ExcelUtil {
     }
 
 
-    public static Map<String,List<Record>> readXlsx(String path) throws IOException {
+    public static Map<String,List<Record>> readXlsx(File file) throws IOException {
         Map<String,List<Record>> map = new HashMap<String,List<Record>>();
-        InputStream is = new FileInputStream(path);
+        InputStream is = new FileInputStream(file);
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
 
 
