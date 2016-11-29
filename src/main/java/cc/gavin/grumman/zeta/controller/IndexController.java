@@ -137,7 +137,7 @@ public class IndexController extends Controller {
             resultMsg.put("status",1);
             resultMsg.put("msg",errMessage);
         }
-        renderJson(errMessage);
+        renderJson(resultMsg);
 
     }
 }
