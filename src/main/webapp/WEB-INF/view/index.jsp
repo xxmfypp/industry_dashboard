@@ -16,7 +16,7 @@
 </head>
 <body >
 <%@ include file="/WEB-INF/view/common/header.jsp"%>
-
+<%= request.getAttribute("data")%>
 <div class="layout">
 <%--    <div class="layout-left" id="main-menu-cot">
 

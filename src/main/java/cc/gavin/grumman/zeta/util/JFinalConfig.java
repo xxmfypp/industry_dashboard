@@ -11,15 +11,20 @@ import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.render.ViewType;
 import org.apache.log4j.Logger;
 
+import java.util.concurrent.ForkJoinPool;
+
 public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 	
 	protected final static Logger logger = Logger.getLogger(JFinalConfig.class);
+
+	public static ForkJoinPool fjp;
 	
 	@Override
 	public void afterJFinalStart() {
 		// TODO Auto-generated method stub
 		super.afterJFinalStart();
 
+		fjp = new ForkJoinPool(ConfigFileUtil.getThreadCount());
 	}
 
 	@Override

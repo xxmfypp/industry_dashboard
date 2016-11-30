@@ -91,4 +91,9 @@ public class ConfigFileUtil {
 		return PropKit.getBoolean("jfinal.debug", true);
 	}
 
+	public static Integer getThreadCount(){
+		getConfig();
+		return PropKit.getInt("thread.count", 500);
+	}
+
 }

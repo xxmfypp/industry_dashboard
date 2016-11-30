@@ -1,11 +1,15 @@
 package cc.gavin.grumman.zeta.controller;
 
+import cc.gavin.grumman.zeta.service.QueryService;
 import cc.gavin.grumman.zeta.util.ExcelUtil;
+import cc.gavin.grumman.zeta.util.JFinalConfig;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import java.io.*;
@@ -13,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Created by user on 11/4/16.
@@ -22,7 +28,69 @@ public class IndexController extends Controller {
     /**
      * 查询
      */
-    public void index(){
+    public void index() throws ExecutionException, InterruptedException {
+
+        long start_time = System.currentTimeMillis();
+
+
+        QueryService genderCount = new QueryService("select gender as AA ,count(1) as BB from user_info GROUP BY gender ",0);
+
+        QueryService birthdayCount = new QueryService("select DATE_FORMAT(birthday,'%Y') as AA,count(1) as BB from user_info GROUP BY  DATE_FORMAT(birthday,'%Y')",1);
+
+        QueryService categoryCount = new QueryService("select category as AA,COUNT(1) as BB from commodity_info GROUP BY category ",0);
+
+        QueryService priceCount = new QueryService("select '价格小于200'as AA,COUNT(1) as BB from commodity_info where price < 200" +
+                " UNION " +
+                "select '价格200-700',COUNT(1) from commodity_info where price BETWEEN 200 and 400" +
+                " UNION " +
+                "select '价格400-600',COUNT(1) from commodity_info where price BETWEEN 400 and 600" +
+                " UNION " +
+                "select '价格600-800',COUNT(1) from commodity_info where price BETWEEN 600 and 800" +
+                " UNION " +
+                "select '价格800-1000',COUNT(1) from commodity_info where price BETWEEN 800 and 1000" +
+                " UNION " +
+                "select '价格1000-1200',COUNT(1) from commodity_info where price BETWEEN 1000 and 1200" +
+                " UNION " +
+                "select '价格1200-1400',COUNT(1) from commodity_info where price BETWEEN 1200 and 1400" +
+                " UNION " +
+                "select '价格1400-1600',COUNT(1) from commodity_info where price BETWEEN 1400 and 1600" +
+                " UNION " +
+                "select '价格1600-1800',COUNT(1) from commodity_info where price BETWEEN 1600 and 1800" +
+                " UNION " +
+                "select '价格1800-2000',COUNT(1) from commodity_info where price BETWEEN 1800 and 2000" +
+                " UNION " +
+                "select '价格大于2000',COUNT(1) from commodity_info where price >2000",0);
+
+        QueryService collectionCount = new QueryService("select b.`name` as AA,count(1) as BB from collection_info a INNER JOIN commodity_info b on a.commodity_id=b.commodity_id GROUP BY a.commodity_id ORDER BY COUNT(1) DESC LIMIT 0,10",0);
+
+
+        QueryService orderAmountCount =  new QueryService("select DATE_FORMAT(create_time,'%Y-%m') as AA ,SUM(amount) as BB  from order_info GROUP BY DATE_FORMAT(create_time,'%Y-%m')",1);
+
+        QueryService orderAreaCount = new QueryService("select area as AA,count(1) as BB  from order_info GROUP BY area",0);
+
+
+        Future<JSON> genderJson = JFinalConfig.fjp.submit(genderCount);
+        Future<JSON> birthdayFuture = JFinalConfig.fjp.submit(birthdayCount);
+        Future<JSON> categoryFuture = JFinalConfig.fjp.submit(categoryCount);
+        Future<JSON> priceFuture = JFinalConfig.fjp.submit(priceCount);
+        Future<JSON> collectionFuture = JFinalConfig.fjp.submit(collectionCount);
+
+        Future<JSON> orderAmountFuture = JFinalConfig.fjp.submit(orderAmountCount);
+        Future<JSON> orderAreaFuture = JFinalConfig.fjp.submit(orderAreaCount);
+
+        JSONObject jsonResult = new JSONObject();
+
+        jsonResult.put("genderData",genderJson.get());
+        jsonResult.put("birthdayData",birthdayFuture.get());
+        jsonResult.put("categoryData",categoryFuture.get());
+        jsonResult.put("priceData",priceFuture.get());
+        jsonResult.put("collectionData",collectionFuture.get());
+        jsonResult.put("orderAmountData",orderAmountFuture.get());
+        jsonResult.put("orderAreaData",orderAreaFuture.get());
+
+        setAttr("data",jsonResult);
+
+        System.out.println(System.currentTimeMillis()-start_time);
 
         renderJsp("index.jsp");
 
