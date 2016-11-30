@@ -5,12 +5,14 @@ import cc.gavin.grumman.zeta.util.ExcelUtil;
 import cc.gavin.grumman.zeta.util.JFinalConfig;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PathKit;
+import com.jfinal.log.Log4jLogger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.log4j.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -25,20 +27,26 @@ import java.util.concurrent.Future;
  */
 public class IndexController extends Controller {
 
+    private Logger logger = Logger.getLogger(IndexController.class);
+
     /**
-     * 查询
+     * 主页统计查询
      */
     public void index() throws ExecutionException, InterruptedException {
 
         long start_time = System.currentTimeMillis();
 
 
+        //用户性别 - 饼状图
         QueryService genderCount = new QueryService("select gender as AA ,count(1) as BB from user_info GROUP BY gender ",0);
 
+        //用户出生日期 - 柱状图
         QueryService birthdayCount = new QueryService("select DATE_FORMAT(birthday,'%Y') as AA,count(1) as BB from user_info GROUP BY  DATE_FORMAT(birthday,'%Y')",1);
 
+        //商品类别 - 环状图
         QueryService categoryCount = new QueryService("select category as AA,COUNT(1) as BB from commodity_info GROUP BY category ",0);
 
+        //价格分布图 - 饼状图
         QueryService priceCount = new QueryService("select '价格小于200'as AA,COUNT(1) as BB from commodity_info where price < 200" +
                 " UNION " +
                 "select '价格200-700',COUNT(1) from commodity_info where price BETWEEN 200 and 400" +
@@ -61,11 +69,13 @@ public class IndexController extends Controller {
                 " UNION " +
                 "select '价格大于2000',COUNT(1) from commodity_info where price >2000",0);
 
+        //收藏记录 - 柱状图
         QueryService collectionCount = new QueryService("select b.`name` as AA,count(1) as BB from collection_info a INNER JOIN commodity_info b on a.commodity_id=b.commodity_id GROUP BY a.commodity_id ORDER BY COUNT(1) DESC LIMIT 0,10",0);
 
-
+        //订单金额走势 - 折线图
         QueryService orderAmountCount =  new QueryService("select DATE_FORMAT(create_time,'%Y-%m') as AA ,SUM(amount) as BB  from order_info GROUP BY DATE_FORMAT(create_time,'%Y-%m')",1);
 
+        //订单区域数量 - 地图
         QueryService orderAreaCount = new QueryService("select area as AA,count(1) as BB  from order_info GROUP BY area",0);
 
 
@@ -74,12 +84,10 @@ public class IndexController extends Controller {
         Future<JSON> categoryFuture = JFinalConfig.fjp.submit(categoryCount);
         Future<JSON> priceFuture = JFinalConfig.fjp.submit(priceCount);
         Future<JSON> collectionFuture = JFinalConfig.fjp.submit(collectionCount);
-
         Future<JSON> orderAmountFuture = JFinalConfig.fjp.submit(orderAmountCount);
         Future<JSON> orderAreaFuture = JFinalConfig.fjp.submit(orderAreaCount);
 
         JSONObject jsonResult = new JSONObject();
-
         jsonResult.put("genderData",genderJson.get());
         jsonResult.put("birthdayData",birthdayFuture.get());
         jsonResult.put("categoryData",categoryFuture.get());
@@ -90,25 +98,15 @@ public class IndexController extends Controller {
 
         setAttr("data",jsonResult);
 
-        System.out.println(System.currentTimeMillis()-start_time);
+        logger.info("统计耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
 
         renderJsp("index.jsp");
 
     }
 
-    public void test() throws Exception {
-        UploadFile uploadFile = null;
-
-        FileInputStream in = new FileInputStream(uploadFile.getFile());
-
-        String fileName = "/WEB-INF/resource/lib/jquery/dist/jquery.js";
-        String fileDownloadPath="";
-        String  webRootPath = PathKit.getWebRootPath();
-        fileName = fileName.startsWith("/")?webRootPath + fileName:fileDownloadPath + fileName;
-        System.out.print(fileName);
-        renderFile(fileName);
-    }
-
+    /**
+     * 上传Excel
+     */
     public void uploadEcl(){
         List<String> errMessage = new ArrayList<String>();
         try {
@@ -131,7 +129,6 @@ public class IndexController extends Controller {
             Db.update("delete from commodity_info");
             Db.update("delete from order_info");
             Db.update("delete from collection_info");
-
 
             for(int i = 0;i<userInfos.size();i++){
 
