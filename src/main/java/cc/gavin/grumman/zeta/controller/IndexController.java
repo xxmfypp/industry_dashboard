@@ -30,12 +30,21 @@ public class IndexController extends Controller {
     private Logger logger = Logger.getLogger(IndexController.class);
 
     /**
-     * 主页统计查询
+     * 主页
      */
     public void index() throws ExecutionException, InterruptedException {
 
-        long start_time = System.currentTimeMillis();
+        renderJsp("index.jsp");
 
+    }
+
+    /**
+     * 统计查询
+     * @throws ExecutionException
+     * @throws InterruptedException
+     */
+    public void query() throws ExecutionException, InterruptedException {
+        long start_time = System.currentTimeMillis();
 
         //用户性别 - 饼状图
         QueryService genderCount = new QueryService("select gender as AA ,count(1) as BB from user_info GROUP BY gender ",0);
@@ -98,10 +107,13 @@ public class IndexController extends Controller {
 
         setAttr("data",jsonResult);
 
+        JSONObject msg = new JSONObject();
+        msg.put("status","0");
+        msg.put("msg","");
+        msg.put("data",jsonResult);
+
         logger.info("统计耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
-
-        renderJsp("index.jsp");
-
+        renderJson(msg);
     }
 
     /**

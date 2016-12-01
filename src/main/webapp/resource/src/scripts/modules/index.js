@@ -36,8 +36,8 @@
                 isSelfErrorTip:true,
                 type:"get",
                 dataType:"json",
-                //url:rs.apiRoot + "charts/index"
-                url:rs.apiRoot + "resource/src/mockData/charts.json"
+                url:"query"
+                //url:rs.apiRoot + "resource/src/mockData/charts.json"
             });
         },
         //模拟数据
