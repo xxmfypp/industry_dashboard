@@ -1,24 +1,22 @@
 package cc.gavin.grumman.zeta.controller;
 
+import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
 import cc.gavin.grumman.zeta.util.ExcelUtil;
 import cc.gavin.grumman.zeta.util.JFinalConfig;
+import cc.gavin.grumman.zeta.util.UserInfoDbUtil;
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
-import com.jfinal.kit.PathKit;
-import com.jfinal.log.Log4jLogger;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 import net.sf.json.JSON;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -116,106 +114,65 @@ public class IndexController extends Controller {
         renderJson(msg);
     }
 
-    /**
-     * 上传Excel
-     */
-    public void uploadEcl(){
+
+
+
+    @Before(Tx.class)
+    public void uploadEcl() {
+
+        long start_time = System.currentTimeMillis();
+
         List<String> errMessage = new ArrayList<String>();
         try {
             UploadFile uploadFile = getFile("uploadFile");
             File excelFile = uploadFile.getFile();
             String fileName = uploadFile.getFileName();
-            Map<String,List<Record>> excelMap =  new HashMap<String, List<Record>>();
+            Map<String, List<Record>> excelMap = new HashMap<String, List<Record>>();
             if (fileName.endsWith("xls")) {
                 ExcelUtil.readXls(excelFile);
             } else if (fileName.endsWith("xlsx")) {
                 excelMap = ExcelUtil.readXlsx(excelFile);
             }
 
-            List<Record> userInfos = excelMap.get("用户信息");
-            List<Record> commodityInfos = excelMap.get("商品信息");
-            List<Record> orderInfos = excelMap.get("订单信息");
-            List<Record> collectionInfos = excelMap.get("收藏信息");
+            Db.batch(Arrays.asList(new String[]{"delete from user_info", "delete from commodity_info", "delete from order_info", "delete from collection_info"}), 4);
 
-            Db.update("delete from user_info");
-            Db.update("delete from commodity_info");
-            Db.update("delete from order_info");
-            Db.update("delete from collection_info");
+            InsertService userInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("用户信息"));
 
-            for(int i = 0;i<userInfos.size();i++){
+            InsertService commodityInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("商品信息"));
 
-                try{
-                    Db.save("user_info","username",userInfos.get(i));
-                }catch (Exception e){
-                    StringBuilder sb =  new StringBuilder("[用户信息]");
-                    sb.append("  用户名:").append(collectionInfos.get(i).getColumns().get("username"));
-                    sb.append("  性别:").append(collectionInfos.get(i).getColumns().get("gender"));
-                    sb.append("  出生日期:").append(collectionInfos.get(i).getColumns().get("birthday"));
-                    sb.append("  发生异常,异常原因：").append(e.getMessage());
-                    errMessage.add(sb.toString());
-                }
-            }
+            InsertService orderInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("订单信息"));
 
-            for(int i = 0;i<commodityInfos.size();i++){
+            InsertService collectionInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("收藏信息"));
 
-                try{
-                    Db.save("commodity_info","commodity_id",commodityInfos.get(i));
-                }catch (Exception e){
-                    StringBuilder sb =  new StringBuilder("[商品信息]");
-                    sb.append("  商品编号:").append(collectionInfos.get(i).getColumns().get("commodity_id"));
-                    sb.append("  商品名称:").append(collectionInfos.get(i).getColumns().get("name"));
-                    sb.append("  类别:").append(collectionInfos.get(i).getColumns().get("category"));
-                    sb.append("  商品价格:").append(collectionInfos.get(i).getColumns().get("price"));
-                    sb.append("  发生异常,异常原因：").append(e.getMessage());
-                    errMessage.add(sb.toString());
-                }
-            }
+            Future<List<String>> userFuture = JFinalConfig.fjp.submit(userInsertService);
 
-            for(int i = 0;i<orderInfos.size();i++){
+            Future<List<String>> commodityFuture = JFinalConfig.fjp.submit(commodityInsertService);
 
-                try{
-                    Db.save("order_info","order_id",orderInfos.get(i));
-                }catch (Exception e){
-                    StringBuilder sb =  new StringBuilder("[订单信息]");
-                    sb.append("  订单编号:").append(collectionInfos.get(i).getColumns().get("order_id"));
-                    sb.append("  用户名:").append(collectionInfos.get(i).getColumns().get("username"));
-                    sb.append("  所属地区:").append(collectionInfos.get(i).getColumns().get("area"));
-                    sb.append("  订单金额:").append(collectionInfos.get(i).getColumns().get("amount"));
-                    sb.append("  订单日期:").append(collectionInfos.get(i).getColumns().get("create_time"));
-                    sb.append("  发生异常,异常原因：").append(e.getMessage());
-                    errMessage.add(sb.toString());
-                }
-            }
+            Future<List<String>> orderFuture = JFinalConfig.fjp.submit(orderInsertService);
 
-            for(int i = 0;i<collectionInfos.size();i++){
-                try{
-                    Db.save("collection_info","username",collectionInfos.get(i));
-                }catch (Exception e){
-                    StringBuilder sb =  new StringBuilder("[收藏信息]");
-                    sb.append("  用户名:").append(collectionInfos.get(i).getColumns().get("username"));
-                    sb.append("  商品编号:").append(collectionInfos.get(i).getColumns().get("commodity_id"));
-                    sb.append("  收藏日期:").append(collectionInfos.get(i).getColumns().get("create_time"));
-                    sb.append("  发生异常,异常原因：").append(e.getMessage());
-                    errMessage.add(sb.toString());
-                }
+            Future<List<String>> collectionFuture = JFinalConfig.fjp.submit(collectionInsertService);
 
-            }
+            errMessage.addAll(userFuture.get());
+            errMessage.addAll(commodityFuture.get());
+            errMessage.addAll(orderFuture.get());
+            errMessage.addAll(collectionFuture.get());
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             errMessage.add(e.getMessage());
         }
 
         JSONObject resultMsg = new JSONObject();
 
-        if(errMessage.isEmpty()){
-            resultMsg.put("status",0);
-            resultMsg.put("msg","上传成功");
-        }else{
-            resultMsg.put("status",1);
-            resultMsg.put("msg",errMessage);
+        if (errMessage.isEmpty()) {
+            resultMsg.put("status", 0);
+            resultMsg.put("msg", "上传成功");
+        } else {
+            resultMsg.put("status", 1);
+            resultMsg.put("msg", errMessage);
         }
-        renderJson(resultMsg);
 
+        logger.info("插入耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
+        renderJson(resultMsg);
     }
 }
