@@ -121,9 +121,10 @@ public class IndexController extends Controller {
         long start_time = System.currentTimeMillis();
 
         List<String> errMessage = new ArrayList<String>();
+        File excelFile = null;
         try {
             UploadFile uploadFile = getFile("uploadFile");
-            File excelFile = uploadFile.getFile();
+            excelFile = uploadFile.getFile();
             String fileName = uploadFile.getFileName();
             Map<String, List<String>> excelMap = new HashMap<String, List<String>>();
             if (fileName.endsWith("xls")) {
@@ -158,6 +159,10 @@ public class IndexController extends Controller {
         } catch (Exception e) {
             e.printStackTrace();
             errMessage.add(e.getMessage());
+        }finally {
+            if(excelFile!=null){
+                excelFile.delete();
+            }
         }
 
         JSONObject resultMsg = new JSONObject();
