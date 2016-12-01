@@ -36,7 +36,7 @@
                 isSelfErrorTip:true,
                 type:"get",
                 dataType:"json",
-                url:"query"
+                url:rs.apiRoot + "query"
                 //url:rs.apiRoot + "resource/src/mockData/charts.json"
             });
         },
@@ -50,8 +50,8 @@
             this.chartOrderAreaNum();
         },
         chartUser:function () {
-            var userBirth = this.data.userBirth,
-            userGender = this.data.userGender;
+            var userBirth = this.data.birthdayData,
+            userGender = this.data.genderData;
             this.chartUser = echarts.init(this.$(".js-user")[0]);
             this.chartUser.setOption({
                 title: {
@@ -104,7 +104,7 @@
                                 }
                             }
                         },
-                        data:userGender.seriesData
+                        data:userGender/*.seriesData*/
                     },
                     {
                         name:'出生日期',
@@ -116,7 +116,7 @@
             })
         },
         chartGoodsCategory:function () {
-            var goodsCategory = this.data.goodsCategory;
+            var goodsCategory = this.data.categoryData;
             this.chartGoodsCategory = echarts.init(this.$(".js-goodsCategory")[0]);
             this.chartGoodsCategory.setOption({
                 title: {
@@ -150,13 +150,13 @@
                                 show: true
                             }
                         },
-                        data:goodsCategory.seriesData
+                        data:goodsCategory/*.seriesData*/
                     }
                 ]
             })
         },
         chartPriceDivide:function () {
-            var priceDivide = this.data.priceDivide;
+            var priceDivide = this.data.priceData;
             this.chartPriceDivide = echarts.init(this.$(".js-priceDivide")[0]);
             this.chartPriceDivide.setOption({
                 title : {
@@ -172,7 +172,7 @@
                         type: 'pie',
                         radius : '55%',
                         center: ['50%', '60%'],
-                        data:priceDivide.seriesData,
+                        data:priceDivide/*.seriesData*/,
                         itemStyle: {
                             emphasis: {
                                 shadowBlur: 10,
@@ -185,7 +185,7 @@
             })
         },
         chartCollectTop5:function () {
-            var collectTop5 = this.data.collectTop5;
+            var collectTop5 = this.data.collectionData;
             this.chartCollectTop5 = echarts.init(this.$(".js-collectTop5")[0]);
             this.chartCollectTop5.setOption({
                 title : {
@@ -207,7 +207,7 @@
                 yAxis : [
                     {
                         type : 'category',
-                        data : collectTop5.xAxisData,
+                        data : _.pluck(collectTop5,"name"),
                         axisTick: {
                             alignWithLabel: true
                         }
@@ -223,13 +223,13 @@
                         name:'数量',
                         type:'bar',
                         barWidth: '60%',
-                        data:collectTop5.seriesData
+                        data:_.pluck(collectTop5,"value")
                     }
                 ]
             })
         },
         chartOrderPriceTrend:function () {
-            var orderPriceTrend = this.data.orderPriceTrend;
+            var orderPriceTrend = this.data.orderAmountData;
             this.chartOrderPriceTrend = echarts.init(this.$(".js-orderPriceTrend")[0]);
             this.chartOrderPriceTrend.setOption({
                 title: {
@@ -273,7 +273,7 @@
             })
         },
         chartOrderAreaNum:function () {
-            var orderAreaNum = this.data.orderAreaNum;
+            var orderAreaNum = this.data.orderAreaData;
             this.orderAreaNumChart = echarts.init(this.$(".js-orderAreaNum")[0]);
             this.orderAreaNumChart.setOption({
                 title: {
@@ -284,7 +284,7 @@
                 },
                 visualMap: {
                     min: 0,
-                    max: 2500,
+                    max: 1000,
                     left: 'left',
                     top: 'bottom',
                     text: ['高','低'],           // 文本，默认为数值文本
@@ -315,7 +315,12 @@
                                 show: true
                             }
                         },
-                        data:orderAreaNum.seriesData
+                        data:(function (dataList) {
+                            _.each(dataList,function (data) {
+                                data.name = data.name.replace(/省|市/g,"")
+                            })
+                            return dataList
+                        })(orderAreaNum)
                     }
                 ]
             })
