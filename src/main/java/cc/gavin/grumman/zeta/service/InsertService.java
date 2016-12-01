@@ -1,8 +1,8 @@
 package cc.gavin.grumman.zeta.service;
 
-import cc.gavin.grumman.zeta.util.DdUtil;
-import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.Db;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.RecursiveTask;
 
@@ -12,14 +12,22 @@ import java.util.concurrent.RecursiveTask;
 public class InsertService extends RecursiveTask<List<String>> {
 
 
-    private DdUtil ddUtil;
-
-    private List<Record> data;
+    private List<String> data;
 
 
-    public InsertService(DdUtil ddUtil,List<Record> data){
-        this.ddUtil = ddUtil;
+    public InsertService(List<String> data){
         this.data = data;
+    }
+
+    private List<String> insert(List<String> data) {
+        List<String> errMessage = new ArrayList<String>();
+        try{
+            Db.batch(data,data.size());
+        }catch (Exception e){
+            errMessage.add(e.getMessage());
+        }
+
+        return errMessage;
     }
 
 
@@ -27,6 +35,6 @@ public class InsertService extends RecursiveTask<List<String>> {
 
     @Override
     protected List<String> compute() {
-        return ddUtil.insert(data);
+        return insert(data);
     }
 }

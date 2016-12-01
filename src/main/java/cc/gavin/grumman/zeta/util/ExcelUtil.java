@@ -52,8 +52,8 @@ public class ExcelUtil {
     }
 
 
-    public static Map<String,List<Record>> readXlsx(File file) throws IOException {
-        Map<String,List<Record>> map = new HashMap<String,List<Record>>();
+    public static Map<String,List<String>> readXlsx(File file) throws IOException {
+        Map<String,List<String>> map = new HashMap<String,List<String>>();
         InputStream is = new FileInputStream(file);
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
 
@@ -65,100 +65,86 @@ public class ExcelUtil {
                 continue;
             }
             if(xssfSheet.getSheetName().equals("用户信息")){
-                map.put("用户信息",getUserInfoRecord(xssfSheet));
+                map.put("用户信息",getUserInfoSql(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("商品信息")){
-                map.put("商品信息",getCommodityInfoRecord(xssfSheet));
+                map.put("商品信息",getCommodityInfoSql(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("订单信息")){
-                map.put("订单信息",getOrderInfoRecord(xssfSheet));
+                map.put("订单信息",getOrderInfoSql(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("收藏信息")){
-                map.put("收藏信息",getCollectionInfoRecord(xssfSheet));
+                map.put("收藏信息",getCollectionInfoSql(xssfSheet));
             }
         }
         return map;
     }
 
 
-    private  static List<Record> getUserInfoRecord(XSSFSheet xssfSheet){
+    private  static List<String> getUserInfoSql(XSSFSheet xssfSheet){
         XSSFRow title_xssfRow = xssfSheet.getRow(0);
 
         Map<String,Integer> map  =  getIndexMap(new String[]{"用户名","性别","出生日期"},title_xssfRow);
 
-        List<Record> list_Record = new ArrayList<Record>();
+        List<String> list_Sql = new ArrayList<String>();
 
         for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow != null) {
-                Record record = new Record();
-                record.set("username",getValue(xssfRow.getCell(map.get("用户名"))));
-                record.set("gender",getValue(xssfRow.getCell(map.get("性别"))));
-                record.set("birthday",getValue(xssfRow.getCell(map.get("出生日期"))));
-                list_Record.add(record);
+                String sql = "insert into `user_info`(`birthday`, `username`, `gender`) values('"+getValue(xssfRow.getCell(map.get("出生日期")))+"', '"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("性别")))+"')";
+                list_Sql.add(sql);
             }
+
         }
-        return list_Record;
+        return list_Sql;
     }
 
-    private  static List<Record> getCommodityInfoRecord(XSSFSheet xssfSheet){
+    private  static List<String> getCommodityInfoSql(XSSFSheet xssfSheet){
         XSSFRow title_xssfRow = xssfSheet.getRow(0);
 
         Map<String,Integer> map  =  getIndexMap(new String[]{"商品编号","商品名称","类别","商品价格"},title_xssfRow);
 
-        List<Record> list_Record = new ArrayList<Record>();
+        List<String> list_Sql = new ArrayList<String>();
 
         for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow != null) {
-                Record record = new Record();
-                record.set("commodity_id",getValue(xssfRow.getCell(map.get("商品编号"))));
-                record.set("name",getValue(xssfRow.getCell(map.get("商品名称"))));
-                record.set("category",getValue(xssfRow.getCell(map.get("类别"))));
-                record.set("price",getValue(xssfRow.getCell(map.get("商品价格"))));
-                list_Record.add(record);
+                String sql = "insert into `commodity_info`(`category`, `price`, `name`, `commodity_id`) values('"+getValue(xssfRow.getCell(map.get("类别")))+"', '"+getValue(xssfRow.getCell(map.get("商品价格")))+"', '"+getValue(xssfRow.getCell(map.get("商品名称")))+"', '"+getValue(xssfRow.getCell(map.get("商品编号")))+"')";
+                list_Sql.add(sql);
             }
         }
-        return list_Record;
+        return list_Sql;
     }
 
-    private  static List<Record> getOrderInfoRecord(XSSFSheet xssfSheet){
+    private  static List<String> getOrderInfoSql(XSSFSheet xssfSheet){
         XSSFRow title_xssfRow = xssfSheet.getRow(0);
 
         Map<String,Integer> map  =  getIndexMap(new String[]{"订单编号","用户名","所属地区","订单金额","订单日期"},title_xssfRow);
 
-        List<Record> list_Record = new ArrayList<Record>();
+        List<String> list_Sql = new ArrayList<String>();
 
         for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow != null) {
-                Record record = new Record();
-                record.set("order_id",getValue(xssfRow.getCell(map.get("订单编号"))));
-                record.set("username",getValue(xssfRow.getCell(map.get("用户名"))));
-                record.set("area",getValue(xssfRow.getCell(map.get("所属地区"))));
-                record.set("amount",getValue(xssfRow.getCell(map.get("订单金额"))));
-                record.set("create_time",getValue(xssfRow.getCell(map.get("订单日期"))));
-                list_Record.add(record);
+                String sql = "insert into `order_info`(`amount`, `username`, `area`, `create_time`, `order_id`) values('"+getValue(xssfRow.getCell(map.get("订单金额")))+"', '"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("所属地区")))+"', '"+getValue(xssfRow.getCell(map.get("订单日期")))+"', '"+getValue(xssfRow.getCell(map.get("订单编号")))+"')";
+                list_Sql.add(sql);
             }
         }
-        return list_Record;
+        return list_Sql;
     }
 
-    private  static List<Record> getCollectionInfoRecord(XSSFSheet xssfSheet){
+    private  static List<String> getCollectionInfoSql(XSSFSheet xssfSheet){
         XSSFRow title_xssfRow = xssfSheet.getRow(0);
 
         Map<String,Integer> map  =  getIndexMap(new String[]{"用户名","商品编号","收藏日期"},title_xssfRow);
 
-        List<Record> list_Record = new ArrayList<Record>();
+        List<String> list_Sql = new ArrayList<String>();
 
         for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
             XSSFRow xssfRow = xssfSheet.getRow(rowNum);
             if (xssfRow != null) {
-                Record record = new Record();
-                record.set("username",getValue(xssfRow.getCell(map.get("用户名"))));
-                record.set("commodity_id",getValue(xssfRow.getCell(map.get("商品编号"))));
-                record.set("create_time",getValue(xssfRow.getCell(map.get("收藏日期"))));
-                list_Record.add(record);
+                String sql = "insert into `collection_info`(`username`, `create_time`, `commodity_id`) values('"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("收藏日期")))+"', '"+getValue(xssfRow.getCell(map.get("商品编号")))+"')";
+                list_Sql.add(sql);
             }
         }
-        return list_Record;
+        return list_Sql;
     }
 
 

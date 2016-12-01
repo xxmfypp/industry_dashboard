@@ -2,9 +2,7 @@ package cc.gavin.grumman.zeta.controller;
 
 import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
-import cc.gavin.grumman.zeta.util.ExcelUtil;
-import cc.gavin.grumman.zeta.util.JFinalConfig;
-import cc.gavin.grumman.zeta.util.UserInfoDbUtil;
+import cc.gavin.grumman.zeta.util.*;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -127,7 +125,7 @@ public class IndexController extends Controller {
             UploadFile uploadFile = getFile("uploadFile");
             File excelFile = uploadFile.getFile();
             String fileName = uploadFile.getFileName();
-            Map<String, List<Record>> excelMap = new HashMap<String, List<Record>>();
+            Map<String, List<String>> excelMap = new HashMap<String, List<String>>();
             if (fileName.endsWith("xls")) {
                 ExcelUtil.readXls(excelFile);
             } else if (fileName.endsWith("xlsx")) {
@@ -136,13 +134,13 @@ public class IndexController extends Controller {
 
             Db.batch(Arrays.asList(new String[]{"delete from user_info", "delete from commodity_info", "delete from order_info", "delete from collection_info"}), 4);
 
-            InsertService userInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("用户信息"));
+            InsertService userInsertService = new InsertService(excelMap.get("用户信息"));
 
-            InsertService commodityInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("商品信息"));
+            InsertService commodityInsertService = new InsertService(excelMap.get("商品信息"));
 
-            InsertService orderInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("订单信息"));
+            InsertService orderInsertService = new InsertService(excelMap.get("订单信息"));
 
-            InsertService collectionInsertService = new InsertService(new UserInfoDbUtil(), excelMap.get("收藏信息"));
+            InsertService collectionInsertService = new InsertService(excelMap.get("收藏信息"));
 
             Future<List<String>> userFuture = JFinalConfig.fjp.submit(userInsertService);
 
