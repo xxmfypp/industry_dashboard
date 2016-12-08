@@ -40,7 +40,9 @@ a, a:hover, a:focus {
 @media (max-width: 1366px) {
     html,body{font-size: 15px}
 }
-
+@media (max-width: 600px) {
+    html,body{font-size: 12px}
+}
 .control-label.light{
     font-weight: 500;
 }

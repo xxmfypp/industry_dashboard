@@ -15,15 +15,15 @@
     </div>
     <div class="header-main justify">
         <div class="dsib top-nav vertical-middle js-top-nav">
-            <a class="nav-item vertical-middle transition-2" href="#">
+            <a class="nav-item vertical-middle transition-2" href="#" title="数据图表">
                 <div class="line transition-2"></div>
                 <span class="fa fa-bar-chart"></span>
-                数据图表
+                <span class="hidden-xs">数据图表</span>
             </a>
-            <a class="nav-item vertical-middle transition-2"  href="#upload">
+            <a class="nav-item vertical-middle transition-2"  href="#upload" title="上传数据">
                 <div class="line transition-2"></div>
                 <span class="glyphicon glyphicon-upload"> </span>
-                上传数据
+                <span class="hidden-xs">上传数据</span>
             </a>
         </div>
         <div class="dsib vertical-middle">

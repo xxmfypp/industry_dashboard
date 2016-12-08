@@ -68,7 +68,7 @@
                     }
                 },
                 grid: {
-                    left: '3%',
+                    left: '30%',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true
@@ -95,8 +95,13 @@
                             trigger: 'item',
                             formatter: '{a} <br/>{b} : {c} ({d}%)'
                         },
-                        center: [160,130],
-                        radius : [0, 50],
+                        center: ["15%","50%"],
+                        radius : [0, "40%"],
+                        label: {
+                            normal: {
+                                position: 'inner'
+                            }
+                        },
                         itemStyle :　{
                             normal : {
                                 labelLine : {
