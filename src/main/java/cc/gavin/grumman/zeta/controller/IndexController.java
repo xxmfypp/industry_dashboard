@@ -1,15 +1,14 @@
 package cc.gavin.grumman.zeta.controller;
 
+import cc.gavin.grumman.zeta.bean.QueryBean;
 import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
 import cc.gavin.grumman.zeta.util.*;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
-import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
@@ -34,6 +33,8 @@ public class IndexController extends Controller {
 
     }
 
+
+
     /**
      * 统计查询
      * @throws ExecutionException
@@ -42,18 +43,16 @@ public class IndexController extends Controller {
     public void query() throws ExecutionException, InterruptedException {
         long start_time = System.currentTimeMillis();
 
-        //用户性别 - 饼状图
-        QueryService genderCount = new QueryService("select gender as AA ,count(1) as BB from user_info GROUP BY gender ",0);
+        List<QueryBean> list = new ArrayList<QueryBean>();
 
-        //用户出生日期 - 柱状图
-        QueryService birthdayCount = new QueryService("select DATE_FORMAT(birthday,'%Y') as AA,count(1) as BB from user_info GROUP BY  DATE_FORMAT(birthday,'%Y')",1);
+        list.add(new QueryBean("genderData","select gender as AA ,count(1) as BB from user_info GROUP BY gender ",0));
 
-        //商品类别 - 环状图
-        QueryService categoryCount = new QueryService("select category as AA,COUNT(1) as BB from commodity_info GROUP BY category ",0);
+        list.add(new QueryBean("birthdayData","select DATE_FORMAT(birthday,'%Y') as AA,count(1) as BB from user_info GROUP BY  DATE_FORMAT(birthday,'%Y') ",1));
 
-        //价格分布图 - 饼状图
-        QueryService priceCount = new QueryService("select '价格小于200'as AA,COUNT(1) as BB from commodity_info where price < 200" +
-                " UNION " +
+        list.add(new QueryBean("categoryData","select category as AA,COUNT(1) as BB from commodity_info GROUP BY category ",0));
+
+        list.add(new QueryBean("priceData","select '价格小于200'as AA,COUNT(1) as BB from commodity_info where price < 200" +
+        " UNION " +
                 "select '价格200-700',COUNT(1) from commodity_info where price BETWEEN 200 and 400" +
                 " UNION " +
                 "select '价格400-600',COUNT(1) from commodity_info where price BETWEEN 400 and 600" +
@@ -72,41 +71,20 @@ public class IndexController extends Controller {
                 " UNION " +
                 "select '价格1800-2000',COUNT(1) from commodity_info where price BETWEEN 1800 and 2000" +
                 " UNION " +
-                "select '价格大于2000',COUNT(1) from commodity_info where price >2000",0);
+                "select '价格大于2000',COUNT(1) from commodity_info where price >2000",0));
 
-        //收藏记录 - 柱状图
-        QueryService collectionCount = new QueryService("select b.`name` as AA,count(1) as BB from collection_info a INNER JOIN commodity_info b on a.commodity_id=b.commodity_id GROUP BY a.commodity_id ORDER BY COUNT(1) DESC LIMIT 0,10",0);
+        list.add(new QueryBean("collectionData","select b.`name` as AA,count(1) as BB from collection_info a INNER JOIN commodity_info b on a.commodity_id=b.commodity_id GROUP BY a.commodity_id ORDER BY COUNT(1) DESC LIMIT 0,10",0));
 
-        //订单金额走势 - 折线图
-        QueryService orderAmountCount =  new QueryService("select DATE_FORMAT(create_time,'%Y-%m') as AA ,SUM(amount) as BB  from order_info GROUP BY DATE_FORMAT(create_time,'%Y-%m')",1);
+        list.add(new QueryBean("orderAmountData","select DATE_FORMAT(create_time,'%Y-%m') as AA ,SUM(amount) as BB  from order_info GROUP BY DATE_FORMAT(create_time,'%Y-%m')",1));
 
-        //订单区域数量 - 地图
-        QueryService orderAreaCount = new QueryService("select area as AA,count(1) as BB  from order_info GROUP BY area",0);
+        list.add(new QueryBean("orderAreaData","select area as AA,count(1) as BB  from order_info GROUP BY area ",0));
 
-
-        Future<JSON> genderJson = JFinalConfig.fjp.submit(genderCount);
-        Future<JSON> birthdayFuture = JFinalConfig.fjp.submit(birthdayCount);
-        Future<JSON> categoryFuture = JFinalConfig.fjp.submit(categoryCount);
-        Future<JSON> priceFuture = JFinalConfig.fjp.submit(priceCount);
-        Future<JSON> collectionFuture = JFinalConfig.fjp.submit(collectionCount);
-        Future<JSON> orderAmountFuture = JFinalConfig.fjp.submit(orderAmountCount);
-        Future<JSON> orderAreaFuture = JFinalConfig.fjp.submit(orderAreaCount);
-
-        JSONObject jsonResult = new JSONObject();
-        jsonResult.put("genderData",genderJson.get());
-        jsonResult.put("birthdayData",birthdayFuture.get());
-        jsonResult.put("categoryData",categoryFuture.get());
-        jsonResult.put("priceData",priceFuture.get());
-        jsonResult.put("collectionData",collectionFuture.get());
-        jsonResult.put("orderAmountData",orderAmountFuture.get());
-        jsonResult.put("orderAreaData",orderAreaFuture.get());
-
-        setAttr("data",jsonResult);
+        Future<JSONObject> dataJson = JFinalConfig.fjp.submit(new QueryService(list));
 
         JSONObject msg = new JSONObject();
         msg.put("status","0");
         msg.put("msg","");
-        msg.put("data",jsonResult);
+        msg.put("data",dataJson.get());
 
         logger.info("统计耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
         renderJson(msg);
