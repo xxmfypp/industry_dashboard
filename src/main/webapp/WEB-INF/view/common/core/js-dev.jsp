@@ -75,6 +75,7 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             apiRoot: '${ctx}/',
             name: "main",
             version: version,
+            role:"${sessionScope.customerInfo.role}",
             event: _.extend({}, Backbone.Events),
             receiveMessage:function(event){
                 var eventData = event.data.split("?"),

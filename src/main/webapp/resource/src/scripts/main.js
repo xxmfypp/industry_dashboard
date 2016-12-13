@@ -8,7 +8,8 @@ define(function (require) {
 		View = Backbone.View,
 		util = require("util"),
 		ui = require("ui"),
-		rs = window.rs;
+		rs = window.rs,
+		role = rs.role;
 	rs.util = util;
 	/**
 	 * AppRouter
@@ -114,7 +115,7 @@ define(function (require) {
 			subPage.set("path", path);
 		},
 		returnRoot: function () {
-			this.changeUrl("index");
+			this.changeUrl(role == "UPLOAD"?"upload":"index");
 		},
 		toggleSpinning: _.throttle(function (dom, status) {
 			if (status === "loading") {

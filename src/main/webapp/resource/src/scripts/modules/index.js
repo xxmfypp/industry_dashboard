@@ -4,7 +4,8 @@
 ;define(function (require) {
     var
         View = Backbone.View,
-        util = require("util");
+        util = require("util"),
+        role = rs.role;
 
     require("common/china");
     /**
@@ -19,8 +20,8 @@
                 if(_.keys(this.data).length){
                     this.initChart();
                 }else{
-                    util.alert("失败提示","你还<span class='text-danger'>没有上传</span>数据文件",function () {
-                        location.hash = "upload";
+                    util.alert("失败提示","还<span class='text-danger'>没有上传</span>数据文件",function () {
+                        role != "VIEW" &&(location.hash = "upload");
                     },5);
                 }
 

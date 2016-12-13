@@ -4,7 +4,8 @@
 ;define(function (require) {
     var
         View = Backbone.View,
-        util = require("util");;
+        util = require("util"),
+        role = rs.role;
 
     /**
      * App
@@ -35,6 +36,7 @@
                         ctx.currentFileName = resp.fileName;
                         ctx.setProgress('100%');
                         ctx.$(".js-progress-tip-txt").removeClass("text-danger").addClass("text-success").text("文件上传成功!");
+                        if(role == "UPLOAD") return
                         _.delay(function () {
                             util.successTip("成功提示","文件长传成功，稍后将自动进入图表分析",function () {
                                 location.hash = "";
