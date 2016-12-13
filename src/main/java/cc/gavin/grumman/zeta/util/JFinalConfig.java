@@ -1,6 +1,7 @@
 package cc.gavin.grumman.zeta.util;
 
 import cc.gavin.grumman.zeta.controller.IndexController;
+import cc.gavin.grumman.zeta.interceptor.SessionInterceptor;
 import com.jfinal.config.*;
 import com.jfinal.ext.handler.ContextPathHandler;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
@@ -48,6 +49,8 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 		arg0.add(new TxByRegex(".*delete.*"));
 		arg0.add(new TxByRegex(".*add.*"));
 		arg0.add(new TxByRegex(".*update.*"));
+		arg0.add(new SessionInterceptor());
+
 	}
 
 	@Override

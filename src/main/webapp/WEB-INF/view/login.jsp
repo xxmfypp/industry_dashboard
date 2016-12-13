@@ -109,13 +109,13 @@
 <div class="login-wrap">
     <div class="login-container-wrap">
         <h1 class="login-header">泽它科技数据分析系统</h1>
-        <form class="form" method="post">
+        <form class="form" method="post" action="login">
             <div class="opts-wrap">
                 <div class="opts-item">
-                    <span class="fa fa-user"></span> <input class="form-control ipt" placeholder="请输入用户名">
+                    <span class="fa fa-user"></span> <input class="form-control ipt" name="login_name" placeholder="请输入用户名" value="test_admin">
                 </div>
                 <div class="opts-item">
-                    <span class="fa fa-lock"></span> <input class="form-control ipt" type="password" placeholder="请输入密码">
+                    <span class="fa fa-lock"></span> <input class="form-control ipt" name="pwss" type="password" placeholder="请输入密码" value="123456">
                 </div>
                 <div class="opts-item" style="padding: 0">
                     <button type="submit" class="login-btn">登 录</button>

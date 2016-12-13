@@ -91,6 +91,7 @@ define(function (require) {
 			rs.event.on("set:hash", this.setHash, this);
 			rs.event.on("reload:subPage", this.loadHtml, this);
 			Backbone.history.start();
+
 		},
 		initSpinner: function () {
 			this.spinner = new Spinner({
@@ -138,6 +139,7 @@ define(function (require) {
 				container = $("#module-page-container");
 			this.loading();
 			this.menu.activeMenu(subPage.path);
+			debugger;
 			this.pageAjax && this.pageAjax.abort();
 			$.when(
 				//加载模块js
@@ -239,7 +241,7 @@ define(function (require) {
 		},
 		logout:function(){
 			util.confirm("操作确认","即将 <span class='text-danger'>安全退出</span>，是否继续？",function(){
-				//location.replace(rs.apiRoot + "logout");
+				location.replace(rs.apiRoot + "logout");
 			});
 		}
 	});

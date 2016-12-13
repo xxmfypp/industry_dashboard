@@ -4,9 +4,11 @@ import cc.gavin.grumman.zeta.bean.QueryBean;
 import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
 import cc.gavin.grumman.zeta.util.*;
+import cc.gavin.grumman.zeta.validate.LoginValidator;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 import net.sf.json.JSONObject;
@@ -29,8 +31,21 @@ public class IndexController extends Controller {
      */
     public void index() throws ExecutionException, InterruptedException {
 
-        renderJsp("index.jsp");
+        renderJsp("login.jsp");
 
+    }
+
+    @Before({Tx.class,LoginValidator.class})
+    public void login(){
+        String login_name = getPara("login_name");
+        String pwss = getPara("pwss");
+        Record customerInfo =  Db.findFirst("select * from customer_info where login_name=? and pwss = password(?) ",login_name,pwss);
+        if(customerInfo!=null){
+            setSessionAttr("customerInfo",customerInfo);
+            renderJsp("index.jsp");
+        }else{
+            renderJsp("login.jsp");
+        }
     }
 
 
