@@ -11,7 +11,7 @@
         <svg width="24px" height="24px" viewBox="0 0 48 48"><path d="M6 36h36v-4H6v4zm0-10h36v-4H6v4zm0-14v4h36v-4H6z"></path></svg>
     </a>
     <div class="logo dsib">
-        <!--泽它数据分析-->
+        泽它数据分析
     </div>
     <div class="header-main justify">
         <div class="dsib top-nav vertical-middle js-top-nav">
