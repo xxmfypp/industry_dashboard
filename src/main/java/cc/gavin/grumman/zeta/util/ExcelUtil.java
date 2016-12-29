@@ -1,59 +1,40 @@
 package cc.gavin.grumman.zeta.util;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import com.alibaba.druid.util.StringUtils;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import cc.gavin.grumman.zeta.service.AssembleSqlService;
+import cc.gavin.grumman.zeta.service.util.AssembleSql;
+import cc.gavin.grumman.zeta.service.util.impl.*;
+import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
+
 
 /**
- * Created by xxmfypp on 11/29/16.
+ * Created by user on 11/29/16.
  */
 public class ExcelUtil {
 
-    public static void readXls(File file) throws IOException {
-        InputStream is = new FileInputStream(file);
-        HSSFWorkbook hssfWorkbook = new HSSFWorkbook(is);
-
-        for (int numSheet = 0; numSheet < hssfWorkbook.getNumberOfSheets(); numSheet++) {
-            HSSFSheet hssfSheet = hssfWorkbook.getSheetAt(numSheet);
-            if (hssfSheet == null) {
-                continue;
-            }
-            // Read the Row
-            for (int rowNum = 1; rowNum <= hssfSheet.getLastRowNum(); rowNum++) {
-                HSSFRow hssfRow = hssfSheet.getRow(rowNum);
-                if (hssfRow != null) {
-                    HSSFCell name = hssfRow.getCell(0);
-                    HSSFCell passwd = hssfRow.getCell(1);
-                    HSSFCell birthday = hssfRow.getCell(2);
-                    HSSFCell sex = hssfRow.getCell(3);
-                    System.out.println(getValue(name) + "_" + getValue(passwd) + "_" + getValue(birthday) + "_" + getValue(sex));
-                }
-            }
-        }
-    }
+    private static DecimalFormat    df   = new DecimalFormat("######0.00");
+    private static SimpleDateFormat dateformat = new SimpleDateFormat("yyyy/MM/dd");
 
 
-    public static Map<String,List<String>> readXlsx(File file) throws IOException {
-        Map<String,List<String>> map = new HashMap<String,List<String>>();
+    public static List<List<String>> readXlsx1(File file) throws IOException, ExecutionException, InterruptedException {
+        List<AssembleSql> lists = new ArrayList<>();
         InputStream is = new FileInputStream(file);
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
 
@@ -65,111 +46,72 @@ public class ExcelUtil {
                 continue;
             }
             if(xssfSheet.getSheetName().equals("用户信息")){
-                map.put("用户信息",getUserInfoSql(xssfSheet));
+                lists.add(new AssembleUserSqlImpl(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("商品信息")){
-                map.put("商品信息",getCommodityInfoSql(xssfSheet));
+                lists.add(new AssembleCommoditySqlImpl(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("订单信息")){
-                map.put("订单信息",getOrderInfoSql(xssfSheet));
+                lists.add(new AssembleOrderSqlImpl(xssfSheet));
             }else if(xssfSheet.getSheetName().equals("收藏信息")){
-                map.put("收藏信息",getCollectionInfoSql(xssfSheet));
+                lists.add(new AssembleCollectionSqlImpl(xssfSheet));
             }
         }
-        return map;
+        Future<List<List<String>>> future = JFinalConfig.fjp.submit(new AssembleSqlService(lists));
+        return future.get();
     }
 
+    public  static List<List<String>> readXlsx2(File file) throws IOException, ExecutionException, InterruptedException {
+        ForkJoinPool forkJoinPool = new ForkJoinPool(6);
+        List<AssembleSql> lists = new ArrayList<>();
 
-    private  static List<String> getUserInfoSql(XSSFSheet xssfSheet){
-        XSSFRow title_xssfRow = xssfSheet.getRow(0);
-
-        Map<String,Integer> map  =  getIndexMap(new String[]{"用户名","性别","出生日期"},title_xssfRow);
-
-        List<String> list_Sql = new ArrayList<String>();
-
-        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-            if (xssfRow != null) {
-                String sql = "insert into `user_info`(`birthday`, `username`, `gender`) values('"+getValue(xssfRow.getCell(map.get("出生日期")))+"', '"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("性别")))+"')";
-                list_Sql.add(sql);
+        InputStream is = new FileInputStream(file);
+        XSSFWorkbook xssfWorkbook = new XSSFWorkbook(is);
+        // Read the Sheet
+        long start = System.currentTimeMillis();
+        for (int numSheet = 0; numSheet < xssfWorkbook.getNumberOfSheets(); numSheet++) {
+            XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(numSheet);
+            if (xssfSheet == null) {
+                continue;
             }
-
-        }
-        return list_Sql;
-    }
-
-    private  static List<String> getCommodityInfoSql(XSSFSheet xssfSheet){
-        XSSFRow title_xssfRow = xssfSheet.getRow(0);
-
-        Map<String,Integer> map  =  getIndexMap(new String[]{"商品编号","商品名称","类别","商品价格"},title_xssfRow);
-
-        List<String> list_Sql = new ArrayList<String>();
-
-        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-            if (xssfRow != null) {
-                String sql = "insert into `commodity_info`(`category`, `price`, `name`, `commodity_id`) values('"+getValue(xssfRow.getCell(map.get("类别")))+"', '"+getValue(xssfRow.getCell(map.get("商品价格")))+"', '"+getValue(xssfRow.getCell(map.get("商品名称")))+"', '"+getValue(xssfRow.getCell(map.get("商品编号")))+"')";
-                list_Sql.add(sql);
+            //门店入库单 入库单 半成品入库单 半成品出库单 部门调拨单 配送出库单
+            if(xssfSheet.getSheetName().equals("门店入库单")){
+                lists.add(new AssembleStoreStorageSqlImpl(xssfSheet));
+            }else if(xssfSheet.getSheetName().equals("入库单")){
+                lists.add(new AssembleStorageSqlImpl(xssfSheet));
+            }else if(xssfSheet.getSheetName().equals("半成品入库单")){
+                lists.add(new AssemblePPPStorageSqlImpl(xssfSheet));
+            }else if(xssfSheet.getSheetName().equals("半成品出库单")){
+                lists.add(new AssemblePPPOutGoingSqlImpl(xssfSheet));
+            }else if(xssfSheet.getSheetName().equals("部门调拨单")){
+                lists.add(new AssembleDepartmentAllocationSqlImpl(xssfSheet));
+            }else if(xssfSheet.getSheetName().equals("配送出库单")){
+                lists.add(new AssembleDistributionAllocationSqlImpl(xssfSheet));
             }
         }
-        return list_Sql;
+        Future<List<List<String>>> future = forkJoinPool.submit(new AssembleSqlService(lists));
+        return future.get();
     }
 
-    private  static List<String> getOrderInfoSql(XSSFSheet xssfSheet){
-        XSSFRow title_xssfRow = xssfSheet.getRow(0);
 
-        Map<String,Integer> map  =  getIndexMap(new String[]{"订单编号","用户名","所属地区","订单金额","订单日期"},title_xssfRow);
 
-        List<String> list_Sql = new ArrayList<String>();
-
-        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-            if (xssfRow != null) {
-                String sql = "insert into `order_info`(`amount`, `username`, `area`, `create_time`, `order_id`) values('"+getValue(xssfRow.getCell(map.get("订单金额")))+"', '"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("所属地区")))+"', '"+getValue(xssfRow.getCell(map.get("订单日期")))+"', '"+getValue(xssfRow.getCell(map.get("订单编号")))+"')";
-                list_Sql.add(sql);
-            }
+    public static String getValue(XSSFCell xssfRow) {
+        if(xssfRow==null){
+            return "";
         }
-        return list_Sql;
-    }
-
-    private  static List<String> getCollectionInfoSql(XSSFSheet xssfSheet){
-        XSSFRow title_xssfRow = xssfSheet.getRow(0);
-
-        Map<String,Integer> map  =  getIndexMap(new String[]{"用户名","商品编号","收藏日期"},title_xssfRow);
-
-        List<String> list_Sql = new ArrayList<String>();
-
-        for (int rowNum = 1; rowNum <= xssfSheet.getLastRowNum(); rowNum++) {
-            XSSFRow xssfRow = xssfSheet.getRow(rowNum);
-            if (xssfRow != null) {
-                String sql = "insert into `collection_info`(`username`, `create_time`, `commodity_id`) values('"+getValue(xssfRow.getCell(map.get("用户名")))+"', '"+getValue(xssfRow.getCell(map.get("收藏日期")))+"', '"+getValue(xssfRow.getCell(map.get("商品编号")))+"')";
-                list_Sql.add(sql);
-            }
-        }
-        return list_Sql;
-    }
-
-
-    private static String getValue(HSSFCell hssfCell) {
-        if (hssfCell.getCellType() == hssfCell.CELL_TYPE_BOOLEAN) {
-            return String.valueOf(hssfCell.getBooleanCellValue());
-        } else if (hssfCell.getCellType() == hssfCell.CELL_TYPE_NUMERIC) {
-            return String.valueOf(hssfCell.getStringCellValue());
-        } else {
-            return String.valueOf(hssfCell.getStringCellValue());
-        }
-    }
-
-
-    private static String getValue(XSSFCell xssfRow) {
         if (xssfRow.getCellType() == xssfRow.CELL_TYPE_BOOLEAN) {
             return String.valueOf(xssfRow.getBooleanCellValue());
         } else if (xssfRow.getCellType() == xssfRow.CELL_TYPE_NUMERIC) {
-            return String.valueOf(xssfRow.getRawValue());
-        } else {
+            //判断是日期类型
+            if (HSSFDateUtil.isCellDateFormatted(xssfRow))
+                return dateformat.format(DateUtil.getJavaDate(xssfRow.getNumericCellValue()));
+            else{
+                return df.format(xssfRow.getNumericCellValue());
+            }
+        }else{
             return String.valueOf(xssfRow.getStringCellValue());
         }
     }
 
-    private static Map<String,Integer> getIndexMap(String[] param,XSSFRow xssfRow){
+    public static Map<String,Integer> getIndexMap(String[] param,XSSFRow xssfRow){
         Map<String,Integer> map  =  new HashMap<String,Integer>();
         for(int i=0;i<param.length;i++){
             for(int j=0;j<100;j++){
@@ -180,6 +122,7 @@ public class ExcelUtil {
 
                 String value = getValue(cell);
                 if(!StringUtils.isEmpty(value)){
+                    value = value.replaceAll("\\s+","").replaceAll(" ","");
                     if(value.equals(param[i])){
                         map.put(param[i],j);
                     }
@@ -187,8 +130,39 @@ public class ExcelUtil {
                     break;
                 }
             }
+            if(!map.containsKey(param[i])){
+                System.out.println(param[i]);
+            }
         }
+
         return map;
+    }
+
+    public static Object getInt(String param){
+        if(StringUtils.isBlank(param)){
+            return 0;
+        }else{
+            return param;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    public static void main(String[] args){
+        try{
+            readXlsx2(new File("/home/user/Desktop/info.xlsx"));
+        }catch (Exception e){
+           e.printStackTrace();
+        }
+
+
     }
 
 }

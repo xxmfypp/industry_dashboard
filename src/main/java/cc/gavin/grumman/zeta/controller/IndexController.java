@@ -3,8 +3,10 @@ package cc.gavin.grumman.zeta.controller;
 import cc.gavin.grumman.zeta.bean.QueryBean;
 import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
-import cc.gavin.grumman.zeta.util.*;
+import cc.gavin.grumman.zeta.util.ExcelUtil;
+import cc.gavin.grumman.zeta.util.JFinalConfig;
 import cc.gavin.grumman.zeta.validate.LoginValidator;
+import cc.gavin.grumman.zeta.validate.UploadValidator;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -15,7 +17,9 @@ import net.sf.json.JSONObject;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -108,9 +112,12 @@ public class IndexController extends Controller {
 
 
 
-    @Before(Tx.class)
+    @Before({Tx.class,UploadValidator.class})
     public void uploadEcl() {
+        upload2();
+    }
 
+    private void upload1(){
         long start_time = System.currentTimeMillis();
 
         List<String> errMessage = new ArrayList<String>();
@@ -118,37 +125,9 @@ public class IndexController extends Controller {
         try {
             UploadFile uploadFile = getFile("uploadFile");
             excelFile = uploadFile.getFile();
-            String fileName = uploadFile.getFileName();
-            Map<String, List<String>> excelMap = new HashMap<String, List<String>>();
-            if (fileName.endsWith("xls")) {
-                ExcelUtil.readXls(excelFile);
-            } else if (fileName.endsWith("xlsx")) {
-                excelMap = ExcelUtil.readXlsx(excelFile);
-            }
-
-            Db.batch(Arrays.asList(new String[]{"delete from user_info", "delete from commodity_info", "delete from order_info", "delete from collection_info"}), 4);
-
-            InsertService userInsertService = new InsertService(excelMap.get("用户信息"));
-
-            InsertService commodityInsertService = new InsertService(excelMap.get("商品信息"));
-
-            InsertService orderInsertService = new InsertService(excelMap.get("订单信息"));
-
-            InsertService collectionInsertService = new InsertService(excelMap.get("收藏信息"));
-
-            Future<List<String>> userFuture = JFinalConfig.fjp.submit(userInsertService);
-
-            Future<List<String>> commodityFuture = JFinalConfig.fjp.submit(commodityInsertService);
-
-            Future<List<String>> orderFuture = JFinalConfig.fjp.submit(orderInsertService);
-
-            Future<List<String>> collectionFuture = JFinalConfig.fjp.submit(collectionInsertService);
-
-            errMessage.addAll(userFuture.get());
-            errMessage.addAll(commodityFuture.get());
-            errMessage.addAll(orderFuture.get());
-            errMessage.addAll(collectionFuture.get());
-
+            Db.batch(Arrays.asList(new String[]{"truncate table user_info", "truncate table commodity_info", "truncate table order_info", "truncate table collection_info"}), 4);
+            List<List<String>> sqlList = ExcelUtil.readXlsx1(excelFile);
+            JFinalConfig.fjp.execute(new InsertService(sqlList));
         } catch (Exception e) {
             e.printStackTrace();
             errMessage.add(e.getMessage());
@@ -157,7 +136,6 @@ public class IndexController extends Controller {
                 excelFile.delete();
             }
         }
-
         JSONObject resultMsg = new JSONObject();
 
         if (errMessage.isEmpty()) {
@@ -171,4 +149,43 @@ public class IndexController extends Controller {
         logger.info("插入耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
         renderJson(resultMsg);
     }
+
+    private void upload2(){
+        long start_time = System.currentTimeMillis();
+
+        List<String> errMessage = new ArrayList<String>();
+        File excelFile = null;
+        try {
+            UploadFile uploadFile = getFile("uploadFile");
+            excelFile = uploadFile.getFile();
+            Db.batch(Arrays.asList(new String[]{"truncate table department_allocation_info",
+                    "truncate table distribution_allocation_info",
+                    "truncate table ppp_outgoing_info",
+                    "truncate table ppp_storage_info",
+                    "truncate table storage_info",
+                    "truncate table store_storage_info"}), 6);
+            List<List<String>> sqlList = ExcelUtil.readXlsx2(excelFile);
+            JFinalConfig.fjp.submit(new InsertService(sqlList));
+        } catch (Exception e) {
+            e.printStackTrace();
+            errMessage.add(e.getMessage());
+        }finally {
+            if(excelFile!=null){
+                excelFile.delete();
+            }
+        }
+        JSONObject resultMsg = new JSONObject();
+
+        if (errMessage.isEmpty()) {
+            resultMsg.put("status", 0);
+            resultMsg.put("msg", "上传成功");
+        } else {
+            resultMsg.put("status", 1);
+            resultMsg.put("msg", errMessage);
+        }
+
+        logger.info("插入耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
+        renderJson(resultMsg);
+    }
+
 }

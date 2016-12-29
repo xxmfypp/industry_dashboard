@@ -2,8 +2,10 @@ package cc.gavin.grumman.zeta.util;
 
 import cc.gavin.grumman.zeta.controller.IndexController;
 import cc.gavin.grumman.zeta.interceptor.SessionInterceptor;
+import cc.gavin.grumman.zeta.service.CollectionConstatService;
 import com.jfinal.config.*;
 import com.jfinal.ext.handler.ContextPathHandler;
+import com.jfinal.ext.plugin.quartz.QuartzPlugin;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
 import com.jfinal.plugin.activerecord.tx.TxByRegex;
@@ -18,7 +20,7 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 	
 	protected final static Logger logger = Logger.getLogger(JFinalConfig.class);
 
-	public static ForkJoinPool fjp;
+	public static ForkJoinPool fjp = new ForkJoinPool(50);
 	
 	@Override
 	public void afterJFinalStart() {
@@ -26,15 +28,17 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 		super.afterJFinalStart();
 
 		fjp = new ForkJoinPool(ConfigFileUtil.getThreadCount());
+
+		CollectionConstatService.collection();
+
 	}
 
 	@Override
-	public void configConstant(Constants arg0) {
+	public void configConstant(com.jfinal.config.Constants arg0) {
 		// TODO Auto-generated method stub
 		arg0.setDevMode(ConfigFileUtil.getJfinalDebug());
 		arg0.setEncoding("UTF-8");
 		arg0.setViewType(ViewType.JSP);
-		arg0.setMaxPostSize(arg0.getMaxPostSize()*20);
 	}
 
 	@Override
@@ -66,7 +70,12 @@ public class JFinalConfig extends com.jfinal.config.JFinalConfig {
 		arg0.add(arp);
 
 		arp.setDialect(new MysqlDialect());
-		arp.setShowSql(ConfigFileUtil.getJfinalDebug());
+		arp.setShowSql(true);
+
+		// 配置quartz
+		QuartzPlugin quartzPlugin = new QuartzPlugin();
+		arg0.add(quartzPlugin);
+
 
 	}
 

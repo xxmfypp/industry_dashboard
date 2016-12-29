@@ -1,7 +1,7 @@
 package cc.gavin.grumman.zeta.interceptor;
 
 import com.jfinal.aop.Interceptor;
-import com.jfinal.core.ActionInvocation;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Record;
 
@@ -15,20 +15,20 @@ public class SessionInterceptor implements Interceptor {
 
     private static List<String> urlList = Arrays.asList("/","/login","/logout");
 
-    @Override
-    public void intercept(ActionInvocation actionInvocation) {
-        Controller controller = actionInvocation.getController();
 
-        if(urlList.contains(actionInvocation.getActionKey())){
-            actionInvocation.invoke();
+    @Override
+    public void intercept(Invocation invocation) {
+        Controller controller = invocation.getController();
+
+        if(urlList.contains(invocation.getActionKey())){
+            invocation.invoke();
             return;
         }
         Record record = controller.getSessionAttr("customerInfo");
         if ( record==null){
             controller.redirect("/");
         }else{
-            actionInvocation.invoke();
+            invocation.invoke();
         }
-
     }
 }
