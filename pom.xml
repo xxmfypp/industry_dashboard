@@ -15,7 +15,7 @@
         <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
         <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <jfinal.version>1.9</jfinal.version>
+        <jfinal.version>2.0</jfinal.version>
         <jfinal-ext.version>3.1.0</jfinal-ext.version>
         <json-lib-version>2.4</json-lib-version>
         <jstl.version>1.2</jstl.version>
@@ -130,11 +130,11 @@
                         <artifactId>mysql-connector-java</artifactId>
                         <version>5.1.24</version>
                 </exclusion>-->
-                <exclusion>
+                <!--<exclusion>
                         <groupId>org.quartz-scheduler</groupId>
                         <artifactId>quartz</artifactId>
-                        <!--<version>1.8.6</version>-->
-                </exclusion>
+                        <version>1.8.6</version>
+                </exclusion>-->
                 <exclusion>
                     <groupId>joda-time</groupId>
                     <artifactId>joda-time</artifactId>
@@ -304,8 +304,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
