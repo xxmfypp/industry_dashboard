@@ -3,6 +3,7 @@ package cc.gavin.grumman.zeta.controller;
 import cc.gavin.grumman.zeta.bean.QueryBean;
 import cc.gavin.grumman.zeta.service.InsertService;
 import cc.gavin.grumman.zeta.service.QueryService;
+import cc.gavin.grumman.zeta.util.Constants;
 import cc.gavin.grumman.zeta.util.ExcelUtil;
 import cc.gavin.grumman.zeta.util.JFinalConfig;
 import cc.gavin.grumman.zeta.validate.LoginValidator;
@@ -10,10 +11,12 @@ import cc.gavin.grumman.zeta.validate.UploadValidator;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
@@ -71,7 +74,7 @@ public class IndexController extends Controller {
         list.add(new QueryBean("categoryData","select category as AA,COUNT(1) as BB from commodity_info GROUP BY category ",0));
 
         list.add(new QueryBean("priceData","select '价格小于200'as AA,COUNT(1) as BB from commodity_info where price < 200" +
-        " UNION " +
+                " UNION " +
                 "select '价格200-700',COUNT(1) from commodity_info where price BETWEEN 200 and 400" +
                 " UNION " +
                 "select '价格400-600',COUNT(1) from commodity_info where price BETWEEN 400 and 600" +
@@ -188,4 +191,52 @@ public class IndexController extends Controller {
         renderJson(resultMsg);
     }
 
+    public void to_query_store_storage(){
+        setAttr("materiel_types",Constants.storestorage.materiel_type);
+        setAttr("suppliers",Constants.storestorage.supplier);
+        setAttr("income_departments",Constants.storestorage.income_department);
+        setAttr("expenditure_departments",Constants.storestorage.expenditure_department);
+        renderJson();
+
+    }
+
+
+    public void query_store_storage(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String supplier = getPara("supplier");
+        String income_department = getPara("income_department");
+        String expenditure_department = getPara("expenditure_department");
+
+        StringBuilder sb = new StringBuilder(" from store_storage_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(supplier)){
+            sb.append(" and supplier = '"+supplier+"' ");
+        }
+        if(StringUtils.isNotBlank(income_department)){
+            sb.append(" and income_department = '"+income_department+"' ");
+        }
+        if(StringUtils.isNotBlank(expenditure_department)){
+            sb.append(" and expenditure_department = '"+expenditure_department+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        renderJson(page);
+
+    }
 }
