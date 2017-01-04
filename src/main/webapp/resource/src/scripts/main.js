@@ -140,13 +140,12 @@ define(function (require) {
 				container = $("#module-page-container");
 			this.loading();
 			this.menu.activeMenu(subPage.path);
-			debugger;
 			this.pageAjax && this.pageAjax.abort();
 			$.when(
 				//加载模块js
 				this.loadSubModule(subPage.path, subPage.hash),
 				//加载页面HTML结构
-				this.pageAjax = this.loadHtml()
+				this.pageAjax = this.loadHtml(subPage.path, subPage.hash)
 				)
 				.then(function (app) {
 					if (app) {
@@ -183,14 +182,16 @@ define(function (require) {
 			}
 			return def;
 		},
-		loadHtml:function () {
+		loadHtml:function (path,hash) {
 			var
 				ctx = this,
 				subPage = this.subPage.toJSON(),
 				queryData = util.parseUrlParam(subPage.query),
-				container = $("#module-page-container");;
+				container = $("#module-page-container"),
+				url;
+			url = hash === "api"? (rs.apiRoot + path):(rs.staticRoot + "template/" + path + ".html");
 			return rs.ajax({
-				url: rs.staticRoot + "/template/" + subPage.path + ".html",
+				url: url,
 				data: queryData,
 				dataType: "text",
 				success: function (html) {

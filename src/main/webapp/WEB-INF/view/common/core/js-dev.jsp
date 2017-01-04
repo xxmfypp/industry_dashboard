@@ -48,10 +48,7 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
                 "appView": "common/appView",
                 "main": "main",
 
-                "echarts": "${res}/lib/echarts/echarts-all",
-
-                "ckeditorJs": "${res}/lib/ckeditor/ckeditor",
-                "ckeditorStyle": "${res}/lib/ckeditor/skins/moono/editor.css#"
+                "echarts": "${res}/lib/echarts/echarts-all"
             },
             dir:'${root}/scripts',
             base: '${root}/scripts',

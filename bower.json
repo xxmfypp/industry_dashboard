@@ -13,5 +13,8 @@
     "underscore": "^1.8.3",
     "seajs": "^3.0.0",
     "animate.css": "^3.5.2"
+  },
+  "devDependencies": {
+    "vue": "~2.1.8"
   }
 }
