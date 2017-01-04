@@ -15,7 +15,7 @@
         <properties-maven-plugin.version>1.0-alpha-2</properties-maven-plugin.version>
         <maven-war-plugin.version>2.1.1</maven-war-plugin.version>
         <servlet-api.version>2.5</servlet-api.version>
-        <jfinal.version>1.9</jfinal.version>
+        <jfinal.version>2.0</jfinal.version>
         <jfinal-ext.version>3.1.0</jfinal-ext.version>
         <json-lib-version>2.4</json-lib-version>
         <jstl.version>1.2</jstl.version>
@@ -125,36 +125,24 @@
                     <artifactId>freemarker</artifactId>
                     <!--<version>2.3.19</version> -->
                 </exclusion>
-                <!--<exclusion>
-                        <groupId>mysql</groupId>
-                        <artifactId>mysql-connector-java</artifactId>
-                        <version>5.1.24</version>
-                </exclusion>-->
-                <exclusion>
-                        <groupId>org.quartz-scheduler</groupId>
-                        <artifactId>quartz</artifactId>
-                        <!--<version>1.8.6</version>-->
-                </exclusion>
+                <!-- <exclusion> <groupId>mysql</groupId> <artifactId>mysql-connector-java</artifactId>
+                    <version>5.1.24</version> </exclusion> -->
+                <!-- <exclusion> <groupId>org.quartz-scheduler</groupId> <artifactId>quartz</artifactId>
+                    <version>1.8.6</version> </exclusion> -->
                 <exclusion>
                     <groupId>joda-time</groupId>
                     <artifactId>joda-time</artifactId>
                     <!-- <version>2.2</version> -->
                 </exclusion>
-                <!--<exclusion>
-                        <groupId>org.apache.poi</groupId>
-                        <artifactId>poi</artifactId>
-                        <version>3.9</version>
-                </exclusion>-->
+                <!-- <exclusion> <groupId>org.apache.poi</groupId> <artifactId>poi</artifactId>
+                    <version>3.9</version> </exclusion> -->
                 <exclusion>
                     <groupId>org.mongodb</groupId>
                     <artifactId>mongo-java-driver</artifactId>
                     <!-- <version>2.11.2</version> -->
                 </exclusion>
-                <!--<exclusion>
-                        <groupId>log4j</groupId>
-                        <artifactId>log4j</artifactId>
-                        <version>1.2.16</version>
-                </exclusion>-->
+                <!-- <exclusion> <groupId>log4j</groupId> <artifactId>log4j</artifactId>
+                    <version>1.2.16</version> </exclusion> -->
                 <exclusion>
                     <groupId>it.sauronsoftware.cron4j</groupId>
                     <artifactId>cron4j</artifactId>
@@ -165,11 +153,8 @@
                     <artifactId>junit</artifactId>
                     <!-- <version>4.11</version> -->
                 </exclusion>
-                <exclusion>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache</artifactId>
-                        <!--<version>2.7.2</version>-->
-                </exclusion>
+                <!-- <exclusion> <groupId>net.sf.ehcache</groupId> <artifactId>ehcache</artifactId>
+                    <version>2.7.2</version> </exclusion> -->
                 <exclusion>
                     <groupId>c3p0</groupId>
                     <artifactId>c3p0</artifactId>
@@ -200,11 +185,8 @@
                     <artifactId>velocity</artifactId>
                     <!-- <version>1.7</version> -->
                 </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                    <!--<version>14.0.1</version>-->
-                </exclusion>
+                <!-- <exclusion> <groupId>com.google.guava</groupId> <artifactId>guava</artifactId>
+                    <version>14.0.1</version> </exclusion> -->
                 <exclusion>
                     <groupId>net.sf.jxls</groupId>
                     <artifactId>jxls-core</artifactId>
@@ -262,6 +244,9 @@
             <classifier>jdk15</classifier>
         </dependency>
 
+
+
+
     </dependencies>
 
 
@@ -304,8 +289,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
