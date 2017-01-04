@@ -6,6 +6,7 @@ import cc.gavin.grumman.zeta.service.QueryService;
 import cc.gavin.grumman.zeta.util.Constants;
 import cc.gavin.grumman.zeta.util.ExcelUtil;
 import cc.gavin.grumman.zeta.util.JFinalConfig;
+import cc.gavin.grumman.zeta.util.JsonDateValueProcessor;
 import cc.gavin.grumman.zeta.validate.LoginValidator;
 import cc.gavin.grumman.zeta.validate.UploadValidator;
 import com.jfinal.aop.Before;
@@ -15,13 +16,16 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.tx.Tx;
 import com.jfinal.upload.UploadFile;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -191,16 +195,10 @@ public class IndexController extends Controller {
         renderJson(resultMsg);
     }
 
-    public void to_query_store_storage(){
-        setAttr("materiel_types",Constants.storestorage.materiel_type);
-        setAttr("suppliers",Constants.storestorage.supplier);
-        setAttr("income_departments",Constants.storestorage.income_department);
-        setAttr("expenditure_departments",Constants.storestorage.expenditure_department);
-        renderJson();
 
-    }
-
-
+    /**
+     * 分页查询门店入库信息
+     */
     public void query_store_storage(){
         int pageNumber;
         if(getParaToInt("pn")==null){
@@ -236,7 +234,277 @@ public class IndexController extends Controller {
 
         Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
 
-        renderJson(page);
-
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.storestorage.materiel_type);
+        paramJson.put("suppliers",Constants.storestorage.supplier);
+        paramJson.put("income_departments",Constants.storestorage.income_department);
+        paramJson.put("expenditure_departments",Constants.storestorage.expenditure_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
     }
+
+    /**
+     * 分页查询入库信息
+     */
+    public void query_storage(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String supplier = getPara("supplier");
+        String income_department = getPara("income_department");
+        String expenditure_department = getPara("expenditure_department");
+
+        StringBuilder sb = new StringBuilder(" from storage_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(supplier)){
+            sb.append(" and supplier = '"+supplier+"' ");
+        }
+        if(StringUtils.isNotBlank(income_department)){
+            sb.append(" and income_department = '"+income_department+"' ");
+        }
+        if(StringUtils.isNotBlank(expenditure_department)){
+            sb.append(" and expenditure_department = '"+expenditure_department+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.storage.materiel_type);
+        paramJson.put("suppliers",Constants.storage.supplier);
+        paramJson.put("income_departments",Constants.storage.income_department);
+        paramJson.put("expenditure_departments",Constants.storage.expenditure_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
+    }
+
+
+    /**
+     * 分页查询半成品入库信息
+     */
+    public void query_ppp_storage(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String supplier = getPara("supplier");
+        String income_department = getPara("income_department");
+        String expenditure_department = getPara("expenditure_department");
+
+        StringBuilder sb = new StringBuilder(" from ppp_storage_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(supplier)){
+            sb.append(" and supplier = '"+supplier+"' ");
+        }
+        if(StringUtils.isNotBlank(income_department)){
+            sb.append(" and income_department = '"+income_department+"' ");
+        }
+        if(StringUtils.isNotBlank(expenditure_department)){
+            sb.append(" and expenditure_department = '"+expenditure_department+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.pppstorage.materiel_type);
+        paramJson.put("suppliers",Constants.pppstorage.supplier);
+        paramJson.put("income_departments",Constants.pppstorage.income_department);
+        paramJson.put("expenditure_departments",Constants.pppstorage.expenditure_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
+    }
+
+    /**
+     * 分页查询半成品出库信息
+     */
+    public void query_ppp_outgoing(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String supplier = getPara("supplier");
+        String income_department = getPara("income_department");
+        String expenditure_department = getPara("expenditure_department");
+
+        StringBuilder sb = new StringBuilder(" from ppp_outgoing_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(supplier)){
+            sb.append(" and supplier = '"+supplier+"' ");
+        }
+        if(StringUtils.isNotBlank(income_department)){
+            sb.append(" and income_department = '"+income_department+"' ");
+        }
+        if(StringUtils.isNotBlank(expenditure_department)){
+            sb.append(" and expenditure_department = '"+expenditure_department+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.pppoutgoing.materiel_type);
+        paramJson.put("suppliers",Constants.pppoutgoing.supplier);
+        paramJson.put("income_departments",Constants.pppoutgoing.income_department);
+        paramJson.put("expenditure_departments",Constants.pppoutgoing.expenditure_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
+    }
+
+
+
+    /**
+     * 分页查询部门调拨信息
+     */
+    public void query_department_allocation(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String supplier = getPara("supplier");
+        String income_department = getPara("income_department");
+        String expenditure_department = getPara("expenditure_department");
+
+        StringBuilder sb = new StringBuilder(" from department_allocation_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(supplier)){
+            sb.append(" and supplier = '"+supplier+"' ");
+        }
+        if(StringUtils.isNotBlank(income_department)){
+            sb.append(" and income_department = '"+income_department+"' ");
+        }
+        if(StringUtils.isNotBlank(expenditure_department)){
+            sb.append(" and expenditure_department = '"+expenditure_department+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.departmentallocation.materiel_type);
+        paramJson.put("suppliers",Constants.departmentallocation.supplier);
+        paramJson.put("income_departments",Constants.departmentallocation.income_department);
+        paramJson.put("expenditure_departments",Constants.departmentallocation.expenditure_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
+    }
+
+    /**
+     * 分页查询配送出库信息
+     */
+    public void query_distribution_allocation(){
+        int pageNumber;
+        if(getParaToInt("pn")==null){
+            pageNumber=1;
+        }else{
+            pageNumber=getParaToInt("pn");
+        } //前端通过pn传参
+        int pageSize;           //指定每一页的显示数量
+        if(getParaToInt("ps")==null){
+            pageSize=10;
+        }else{
+            pageSize=getParaToInt("ps");
+        }  //对一
+
+        String materiel_type = getPara("materiel_type");
+        String distribution_department = getPara("distribution_department");
+        String distribution_allocation = getPara("distribution_allocation");
+
+        StringBuilder sb = new StringBuilder(" from distribution_allocation_info where 1=1 ");
+        if(StringUtils.isNotBlank(materiel_type)){
+            sb.append(" and materiel_type = '"+materiel_type+"' ");
+        }
+        if(StringUtils.isNotBlank(distribution_department)){
+            sb.append(" and distribution_department = '"+distribution_department+"' ");
+        }
+        if(StringUtils.isNotBlank(distribution_allocation)){
+            sb.append(" and distribution_allocation = '"+distribution_allocation+"' ");
+        }
+
+        Page<Record> page = Db.paginate(pageNumber,pageSize," select * ",sb.toString());
+
+        JSONObject resultJson = new JSONObject();
+        JSONObject paramJson = new JSONObject();
+        paramJson.put("materiel_types",Constants.distributionallocation.materiel_type);
+        paramJson.put("distribution_department",Constants.distributionallocation.distribution_department);
+        paramJson.put("outgoing_department",Constants.distributionallocation.outgoing_department);
+        resultJson.put("params",paramJson);
+        JsonConfig jsonConfig = new JsonConfig();
+        jsonConfig.registerJsonValueProcessor(java.sql.Date.class, new JsonDateValueProcessor());
+        JSONObject pages =  JSONObject.fromObject(page,jsonConfig);
+        resultJson.put("pages", pages);
+        renderJson(resultJson);
+    }
+
+
 }
