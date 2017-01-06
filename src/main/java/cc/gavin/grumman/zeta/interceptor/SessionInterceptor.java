@@ -26,8 +26,8 @@ public class SessionInterceptor implements Interceptor {
         }
         Record record = controller.getSessionAttr("customerInfo");
         if ( record==null){
-            //controller.redirect("/");
-            invocation.invoke();
+            controller.redirect("/");
+//            invocation.invoke();
         }else{
             invocation.invoke();
         }
