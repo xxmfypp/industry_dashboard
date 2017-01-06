@@ -37,8 +37,8 @@
                 isSelfErrorTip:true,
                 type:"get",
                 dataType:"json",
-                // url:rs.apiRoot + "query"
-                url:rs.apiRoot + "resource/src/mockData/charts-2.json"
+                url:rs.apiRoot + "query"
+                // url:rs.apiRoot + "resource/src/mockData/charts-2.json"
             });
         },
         //模拟数据
@@ -104,15 +104,20 @@
         },
         //图表2 各门店入库总金额 - 饼状图
         chartTotalPriceByStore:function () {
-            var totalPriceByStore = this.data.totalPriceByStore;
+            var totalPriceByStore = this.data.totalPriceByStore,seriesData = totalPriceByStore.seriesData;
             this.chartTotalPriceByStoreEl = echarts.init(this.$(".chart-item:eq(1)")[0]);
-
+            var newSeriesData = _.map(seriesData,function (obj) {
+                return {
+                    name:_.keys(obj)[0],
+                    value:_.values(obj)[0]
+                }
+            })
             this.chartTotalPriceByStoreEl.setOption({
                 title: {
                     text: '各门店入库总金额'
                 },
                 legend:{
-                    data:_.pluck(totalPriceByStore,"name")
+                    data:_.keys(seriesData)
                 },
                 tooltip: {
                     trigger: 'item',
@@ -142,7 +147,7 @@
                                 show: true
                             }
                         },
-                        data:totalPriceByStore/*.seriesData*/
+                        data:newSeriesData/*.seriesData*/
                     }
                 ]
             });
