@@ -72,7 +72,7 @@
                     }
                 },
                 grid: {
-                    left: '30%',
+                    left: '3%',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true
@@ -110,6 +110,9 @@
             this.chartTotalPriceByStoreEl.setOption({
                 title: {
                     text: '各门店入库总金额'
+                },
+                legend:{
+                    data:_.pluck(totalPriceByStore,"name")
                 },
                 tooltip: {
                     trigger: 'item',
@@ -191,48 +194,51 @@
         },
         //图标4 调拨信息 物料类型和总价 按照物料类型，汇总总价 趋势图 - 柱状图
         chartAllotMaterialPriceByType:function () {
-            var allotMaterialPriceByType = this.data.allotMaterialPriceByType;
+            var allotMaterialPriceByType = this.data.allotMaterialPriceByType,typeName = allotMaterialPriceByType.typeName,seriesData = allotMaterialPriceByType.seriesData;
             this.chartAllotMaterialPriceByTypeEl = echarts.init(this.$(".chart-item:eq(3)")[0]);
-            this.chartAllotMaterialPriceByTypeEl.setOption({
+            var options = {
                 title: {
                     text: '物料类型和总价'
                 },
-                color: ['#5ab1ef','#ffb980','#b6a2de'],
-                tooltip : {
-                    trigger: 'axis',
-                    axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                        type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                    }
+                legend:{
+                    data:typeName
+                },
+                color: ['#5ab1ef', '#ffb980', '#b6a2de'],
+                tooltip: {
+                    trigger: 'axis'
                 },
                 grid: {
-                    left: '30%',
+                    left: '3%',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true
                 },
-                xAxis : [
+                xAxis: [
                     {
-                        type : 'category',
+                        type: 'category',
                         axisTick: {
                             alignWithLabel: true
                         },
-                        data : allotMaterialPriceByType.xAxisData
+                        data: allotMaterialPriceByType.xAxisData
                     }
                 ],
-                yAxis : [
+                yAxis: [
                     {
-                        type : 'value'
+                        type: 'value'
                     }
                 ],
-                series : [
-                    {
-                        name:'总价',
-                        type:'bar',
-                        areaStyle: {normal: {}},
-                        data:allotMaterialPriceByType.seriesData
-                    }
-                ]
+                series: []
+            },
+            series = options.series;
+            _.each(typeName,function (name,index) {
+                series.push({
+                    name: name,
+                    type: 'line',
+                    areaStyle: {normal: {}},
+                    data: seriesData[index]
+                });
             });
+            this.chartAllotMaterialPriceByTypeEl.setOption(options);
         },
         //图标5 配送出库表 时间 门店 总金额 - 堆叠柱状图
         chartShipStockOut:function () {
@@ -249,7 +255,7 @@
                     }
                 },
                 grid: {
-                    left: '30%',
+                    left: '3%',
                         right: '4%',
                         bottom: '3%',
                         containLabel: true
@@ -324,7 +330,7 @@
                 },
                 visualMap: {
                     min: 0,
-                    max: 10,
+                    max: 100,
                     calculable: true,
                     orient: 'horizontal',
                     left: 'center',
@@ -372,7 +378,7 @@
                     }
                 },
                 grid: {
-                    left: '30%',
+                    left: '3%',
                     right: '4%',
                     bottom: '3%',
                     containLabel: true

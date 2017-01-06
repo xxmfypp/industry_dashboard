@@ -40,7 +40,7 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             escape: /<@-([\s\S]+?)@>/g
         };
         // Set configuration
-        var version = "0.1.5";
+        var version = "0.1.6";
         seajs.config({
             alias: {
                 "ui": "common/ui",
@@ -52,7 +52,8 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             },
             dir:'${root}/scripts',
             base: '${root}/scripts',
-            map: [
+            map: [['.js', '.js?v=' + version]]
+            <%--map: [
                 function(url){
                     var
                             basePath = location.protocol + "//" + location.host + "${root}/scripts/",
@@ -63,7 +64,7 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
                         return url;
                     }
                 }
-            ]
+            ]--%>
         });
 
         //Top namespace is rs
