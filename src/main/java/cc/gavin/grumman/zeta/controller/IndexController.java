@@ -23,10 +23,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -67,6 +69,10 @@ public class IndexController extends Controller {
      * @throws InterruptedException
      */
     public void query() throws ExecutionException, InterruptedException {
+        renderJson(query_report2());
+    }//select materiel_type,sum(income_no) from storage_info group by materiel_type;
+
+    private JSONObject query_report1() throws ExecutionException, InterruptedException {
         long start_time = System.currentTimeMillis();
 
         List<QueryBean> list = new ArrayList<QueryBean>();
@@ -111,12 +117,238 @@ public class IndexController extends Controller {
         msg.put("status","0");
         msg.put("msg","");
         msg.put("data",dataJson.get());
-
-        logger.info("统计耗时:"+String.valueOf(System.currentTimeMillis()-start_time));
-        renderJson(msg);
+        return msg;
     }
 
 
+    private JSONObject query_report2(){
+
+        long start_time = System.currentTimeMillis();
+
+
+
+
+
+
+        JSONObject dataJson =  new JSONObject();
+
+        dataJson.put("materielAmountByType",queryStorgeInfo());
+        dataJson.put("totalPriceByStore",queryStoreStorgeInfo());
+
+        dataJson.put("goodsStockOutPriceTrend",queryPPPOutGoingInfo());
+
+        dataJson.put("allotMaterialPriceByType",queryDepartmentAllocationInfo());
+
+        dataJson.put("shipStockOut",queryDistributionAllocationInfo());
+
+        dataJson.put("stockInTotalPriceTrend",queryStorageInfo());
+
+
+
+        JSONObject resultJson =  new JSONObject();
+
+        resultJson.put("status","0");
+        resultJson.put("data",dataJson);
+
+
+        return resultJson;
+    }
+
+    private JSONObject queryStorgeInfo(){
+        String sql = "select materiel_type,sum(income_no)  as income_no from storage_info group by materiel_type";
+        List<Record> recordList =  Db.find(sql);
+        List<String> x = new ArrayList<>();
+        List<Long> y = new ArrayList<>();
+        for(Record record:recordList){
+            x.add(record.getStr("materiel_type"));
+            y.add(record.getBigDecimal("income_no").longValue());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("xAxisData",x.toArray(new String[x.size()]));
+        jsonObject.put("seriesData",y.toArray(new Long[y.size()]));
+        return jsonObject;
+    }
+
+    private JSONObject queryStoreStorgeInfo(){
+        String sql = "select store_name,sum(income_amount) as income_amount from store_storage_info group by store_name";
+        List<Record> recordList =  Db.find(sql);
+        JSONArray jsonArray = new JSONArray();
+        for(Record record:recordList){
+            JSONObject json = new JSONObject();
+            json.put(record.getStr("store_name"),record.getBigDecimal("income_amount"));
+            jsonArray.add(json);
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("seriesData",jsonArray);
+        return jsonObject;
+    }
+
+    private JSONObject queryPPPOutGoingInfo(){
+        String sql = "select docket_time,sum(expenditure_amount) as expenditure_amount from ppp_outgoing_info group by docket_time";
+        List<Record> recordList =  Db.find(sql);
+        List<String> x = new ArrayList<>();
+        List<Long> y = new ArrayList<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
+        for(Record record:recordList){
+            x.add(dateFormat.format(record.getDate("docket_time")));
+            y.add(record.getBigDecimal("expenditure_amount").longValue());
+        }
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("xAxisData",x.toArray(new String[x.size()]));
+        jsonObject.put("seriesData",y.toArray(new Long[y.size()]));
+        return jsonObject;
+    }
+
+
+    private JSONObject queryDepartmentAllocationInfo(){
+        String sql = "select docket_time,materiel_type,sum(expenditure_amount) as expenditure_amount from department_allocation_info " +
+                "where length(expenditure_department)>0 " +
+                "group by docket_time,materiel_type";
+        List<Record> recordList =  Db.find(sql);
+        Set<String> materielTypes = new HashSet<>();
+        Set<String> docketTimes = new HashSet<>();
+
+        Map<String,BigDecimal> ddAmountMap =  new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
+        for(Record record:recordList){
+            String docketTime = dateFormat.format(record.getDate("docket_time"));
+            String materielType = record.getStr("materiel_type");
+            docketTimes.add(docketTime);
+            materielTypes.add(materielType);
+            ddAmountMap.put(docketTime+"|"+materielType,record.getBigDecimal("expenditure_amount"));
+        }
+        List<String> setList= new ArrayList<String>(docketTimes);
+        Collections.sort(setList, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                // TODO Auto-generated method stub
+
+                return o1.toString().compareTo(o2.toString());
+            }
+
+        });
+        docketTimes = new LinkedHashSet<String>(setList);//这里注意使用LinkedHashSet
+        JSONArray jsonArray = new JSONArray();
+        for(String materielType:materielTypes){
+            BigDecimal[] args = new BigDecimal[docketTimes.size()];
+            int i=0;
+            for(String time:docketTimes){
+                BigDecimal b = ddAmountMap.get(time+"|"+materielType);
+                if(b==null){
+                    args[i] = new BigDecimal(0);
+                }else{
+                    args[i] = b;
+                }
+                i++;
+            }
+            jsonArray.add(args);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("xAxisData",docketTimes.toArray(new String[docketTimes.size()]));
+        jsonObject.put("typeName",materielTypes.toArray(new String[materielTypes.size()]));
+        jsonObject.put("seriesData",jsonArray);
+        return jsonObject;
+    }
+
+    private JSONObject queryDistributionAllocationInfo(){
+        String sql = "select docket_time,distribution_department,sum(cost_amount) as cost_amount from distribution_allocation_info group by docket_time,distribution_department order by docket_time";
+        List<Record> recordList =  Db.find(sql);
+        Set<String> distributionDepartments = new HashSet<>();
+        Set<String> docketTimes = new HashSet<>();
+
+        Map<String,BigDecimal> ddAmountMap =  new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
+        for(Record record:recordList){
+            String docketTime = dateFormat.format(record.getDate("docket_time"));
+            String distributionDepartment = record.getStr("distribution_department");
+            docketTimes.add(docketTime);
+            distributionDepartments.add(distributionDepartment);
+            ddAmountMap.put(docketTime+"|"+distributionDepartment,record.getBigDecimal("cost_amount"));
+        }
+        List<String> setList= new ArrayList<String>(docketTimes);
+        Collections.sort(setList, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                // TODO Auto-generated method stub
+
+                return o1.toString().compareTo(o2.toString());
+            }
+
+        });
+        docketTimes = new LinkedHashSet<String>(setList);//这里注意使用LinkedHashSet
+        JSONArray jsonArray = new JSONArray();
+        for(String department:distributionDepartments){
+            BigDecimal[] args = new BigDecimal[docketTimes.size()];
+            int i=0;
+            for(String time:docketTimes){
+                BigDecimal b = ddAmountMap.get(time+"|"+department);
+                if(b==null){
+                    args[i] = new BigDecimal(0);
+                }else{
+                    args[i] = b;
+                }
+                i++;
+            }
+            jsonArray.add(args);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("xAxisData",docketTimes.toArray(new String[docketTimes.size()]));
+        jsonObject.put("storeName",distributionDepartments.toArray(new String[distributionDepartments.size()]));
+        jsonObject.put("seriesData",jsonArray);
+        return jsonObject;
+    }
+
+
+    private JSONObject queryStorageInfo(){
+        String sql = "select docket_time,materiel_type,sum(income_amount) as income_amount from storage_info group by docket_time,materiel_type order by docket_time";
+        List<Record> recordList =  Db.find(sql);
+        Set<String> materielTypes = new HashSet<>();
+        Set<String> docketTimes = new HashSet<>();
+
+        Map<String,BigDecimal> ddAmountMap =  new HashMap<>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd") ;
+        for(Record record:recordList){
+            String docketTime = dateFormat.format(record.getDate("docket_time"));
+            String materielType = record.getStr("materiel_type");
+            docketTimes.add(docketTime);
+            materielTypes.add(materielType);
+            ddAmountMap.put(docketTime+"|"+materielType,record.getBigDecimal("income_amount"));
+        }
+        List<String> setList= new ArrayList<String>(docketTimes);
+        Collections.sort(setList, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                // TODO Auto-generated method stub
+
+                return o1.toString().compareTo(o2.toString());
+            }
+
+        });
+        docketTimes = new LinkedHashSet<String>(setList);//这里注意使用LinkedHashSet
+        JSONArray jsonArray = new JSONArray();
+        for(String materielT:materielTypes){
+            BigDecimal[] args = new BigDecimal[docketTimes.size()];
+            int i=0;
+            for(String time:docketTimes){
+                BigDecimal b = ddAmountMap.get(time+"|"+materielT);
+                if(b==null){
+                    args[i] = new BigDecimal(0);
+                }else{
+                    args[i] = b;
+                }
+                i++;
+            }
+            jsonArray.add(args);
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("xAxisData",docketTimes.toArray(new String[docketTimes.size()]));
+        jsonObject.put("yAxisData",materielTypes.toArray(new String[materielTypes.size()]));
+        jsonObject.put("seriesData",jsonArray);
+        return jsonObject;
+    }
 
 
     @Before({Tx.class,UploadValidator.class})
@@ -404,7 +636,6 @@ public class IndexController extends Controller {
         resultJson.put("pages", pages);
         renderJson(resultJson);
     }
-
 
 
     /**

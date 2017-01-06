@@ -140,7 +140,7 @@ public class CollectionConstatService {
         List<Record> distribution_departments =  Db.find("select distinct distribution_department from distribution_allocation_info");
         List<Record> distribution_allocations =  Db.find("select distinct outgoing_department from distribution_allocation_info");
         Constants.distributionallocation.materiel_type.clear();
-        Constants.distributionallocation.distribution_allocation.clear();
+        Constants.distributionallocation.outgoing_department.clear();
         Constants.distributionallocation.distribution_department.clear();
         for(Record record:storage_materiel_types){
             Constants.distributionallocation.materiel_type.put(record.getStr("materiel_type"),record.getStr("materiel_type"));
@@ -149,7 +149,7 @@ public class CollectionConstatService {
             Constants.distributionallocation.distribution_department.put(record.getStr("distribution_department"),record.getStr("distribution_department"));
         }
         for(Record record:distribution_allocations){
-            Constants.distributionallocation.distribution_allocation.put(record.getStr("outgoing_department"),record.getStr("outgoing_department"));
+            Constants.distributionallocation.outgoing_department.put(record.getStr("outgoing_department"),record.getStr("outgoing_department"));
         }
 
     }
