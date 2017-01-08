@@ -274,6 +274,7 @@ label.error:after{
 /*======公用表格======*/
 .table-wrap{
     /*border: 1px solid #d8d8d8;*/
+    margin-top: 1rem;
 }
 
 .table-wrap>.loading-status{

@@ -30,6 +30,11 @@
                 <span class="hidden-xs">上传数据</span>
             </a>
             </c:if>
+            <a class="nav-item vertical-middle transition-2"  href="#list" title="列表页">
+                <div class="line transition-2"></div>
+                <span class="glyphicon glyphicon-list-alt"> </span>
+                <span class="hidden-xs">列表页</span>
+            </a>
         </div>
         <div class="dsib vertical-middle">
             <a class="glyphicon glyphicon-log-out js-logout-btn" href="javascript:;"></a>
