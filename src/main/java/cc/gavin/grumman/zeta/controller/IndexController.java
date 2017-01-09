@@ -445,10 +445,10 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String supplier = getPara("supplier");
-        String income_department = getPara("income_department");
-        String expenditure_department = getPara("expenditure_department");
+        String materiel_type = getPara("materiel_types");
+        String supplier = getPara("suppliers");
+        String income_department = getPara("income_departments");
+        String expenditure_department = getPara("expenditure_departments");
 
         StringBuilder sb = new StringBuilder(" from store_storage_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
@@ -497,10 +497,10 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String supplier = getPara("supplier");
-        String income_department = getPara("income_department");
-        String expenditure_department = getPara("expenditure_department");
+        String materiel_type = getPara("materiel_types");
+        String supplier = getPara("suppliers");
+        String income_department = getPara("income_departments");
+        String expenditure_department = getPara("expenditure_departments");
 
         StringBuilder sb = new StringBuilder(" from storage_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
@@ -550,10 +550,10 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String supplier = getPara("supplier");
-        String income_department = getPara("income_department");
-        String expenditure_department = getPara("expenditure_department");
+        String materiel_type = getPara("materiel_types");
+        String supplier = getPara("suppliers");
+        String income_department = getPara("income_departments");
+        String expenditure_department = getPara("expenditure_departments");
 
         StringBuilder sb = new StringBuilder(" from ppp_storage_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
@@ -602,10 +602,10 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String supplier = getPara("supplier");
-        String income_department = getPara("income_department");
-        String expenditure_department = getPara("expenditure_department");
+        String materiel_type = getPara("materiel_types");
+        String supplier = getPara("suppliers");
+        String income_department = getPara("income_departments");
+        String expenditure_department = getPara("expenditure_departments");
 
         StringBuilder sb = new StringBuilder(" from ppp_outgoing_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
@@ -655,10 +655,10 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String supplier = getPara("supplier");
-        String income_department = getPara("income_department");
-        String expenditure_department = getPara("expenditure_department");
+        String materiel_type = getPara("materiel_types");
+        String supplier = getPara("suppliers");
+        String income_department = getPara("income_departments");
+        String expenditure_department = getPara("expenditure_departments");
 
         StringBuilder sb = new StringBuilder(" from department_allocation_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
@@ -707,9 +707,9 @@ public class IndexController extends Controller {
             pageSize=getParaToInt("ps");
         }  //对一
 
-        String materiel_type = getPara("materiel_type");
-        String distribution_department = getPara("distribution_department");
-        String distribution_allocation = getPara("distribution_allocation");
+        String materiel_type = getPara("materiel_types");
+        String distribution_department = getPara("distribution_departments");
+        String distribution_allocation = getPara("distribution_allocations");
 
         StringBuilder sb = new StringBuilder(" from distribution_allocation_info where 1=1 ");
         if(StringUtils.isNotBlank(materiel_type)){
