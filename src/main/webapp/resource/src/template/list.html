@@ -1,6 +1,6 @@
 <style>
     .main-wrap.list-container{
-        overflow: hidden;
+        overflow-y: auto;
     }
     .left-menu.layout-left{
         color:rgba(0,0,0,0.87);
@@ -50,10 +50,10 @@
     </ul>
 </div>
 <div class="main-wrap list-container">
-    <form class="js-query-form" style="display: none">
+    <form class="js-query-form">
         <div class="query-opts ">
-            <div class="query-group dsib">
-                <input type="text" class="form-control w-9" id="applyTime" name="applyTime" value="" placeholder="搜索关键字"/>
+            <div class="query-group dsib js-search-params">
+
             </div>
             <div class="btns-group dsib">
                    <button type="button" class="btn btn-primary btn-md js-query-btn">查询</button>
@@ -90,4 +90,15 @@
         <@})@>
     </tr>
     <@})@>
+</script>
+
+<script type="text/template" id="search-param-tpl">
+    <label>
+        <@-label@>：
+        <select class="form-control" style="width: auto" name="<@-name@>">
+            <@_.each(optionList,function(val){@>
+            <option value="<@-val@>"><@-(val||"-")@></option>
+            <@})@>
+        </select>
+    </label>
 </script>

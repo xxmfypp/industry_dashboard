@@ -15,6 +15,7 @@
         "materiel":"物料",
         "specifications":"规格",
         "materiel_type":"物料类别",
+        "materiel_types":"物料类别",
         "materiel_specifications":"物料及规格",
         "unit":"单位",
         "income_no":"收料数量",
@@ -28,14 +29,17 @@
         "income_amount":"收入金额",
         "expenditure_amount":"发出金额",
         "income_department":"收料部门",
+        "income_departments":"收料部门",
         "expenditure_department":"发料部门",
+        "expenditure_departments":"发料部门",
         "distribution_department":"配送部门",
+        "distribution_departments":"配送部门",
         "supplier":"供应商",
+        "suppliers":"供应商",
         "voucher_no":"凭证号",
         "remark":"备注",
         "num":"收料数量",
     };
-    rs.data.page.totalRow = 200;
     /**
      * App
      */
@@ -49,7 +53,8 @@
             }
             this.tableTpl = {
               header:_.template($("#table-header-tpl").html()),
-              body:_.template($("#table-body-tpl").html())
+              body:_.template($("#table-body-tpl").html()),
+              search:_.template($("#search-param-tpl").html())
             };
             this.currentListType = "";
             //切换列表查询方式
@@ -60,7 +65,7 @@
             if(!listType||this.currentListType == listType) return
             this.currentListType = listType;
             this.activeMenu();
-            this.queryList();
+            this.queryList(true);
 
         },
         //发送ajax call
@@ -73,24 +78,29 @@
             });
         },
         //发送并触发渲染列表
-        queryList:function () {
+        queryList:function (isChangeType) {
             rs.toggleSpinning(this.$(".table-wrap")[0],"loading");
             //rs.mainApp.spinner.spin(this.$(".table-wrap")[0]);
-            $.when(this.send()).then(
-                this.renderList.bind(this)
+            $.when(this.send()).then(function (data) {
+                this.renderList(data,isChangeType);
+            }.bind(this)
             ).always(function(){
                 rs.toggleSpinning(this.$(".table-wrap")[0],"loaded");
             }.bind(this));
         },
         //渲染列表
-        renderList:function(data){
+        renderList:function(data,isChangeType){
             var
                 pages = data.pages,
                 list = pages.list || [{}],
                 columnNames = list[0].columnNames||[],
                 dataList = _.pluck(list,"columnValues");
+            if(isChangeType){
+                this.renderSearchParams(data.params);
+            }
             this.renderListHeader(columnNames);
             this.renderListBody(dataList);
+
             this.paginationView.set({totalCount:pages.totalRow});
 
         },
@@ -104,6 +114,16 @@
             this.$(".js-data-list-cot").html(this.tableTpl.body({
                 dataList:dataList
             }));
+        },
+        renderSearchParams:function (params) {
+            var paramsCot = this.$(".js-search-params").empty(),searchTpl = this.tableTpl.search;
+            _.each(params,function (optionList,key) {
+                paramsCot.append(searchTpl({
+                    label:headerMap[key],
+                    name:key,
+                    optionList:optionList
+                }));
+            })
         },
         activeMenu:function () {
             this.$("#main-menu-cot li.active").removeClass("active");
