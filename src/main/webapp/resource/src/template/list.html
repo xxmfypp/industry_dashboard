@@ -41,13 +41,16 @@
 </style>
 <div class="layout-left left-menu" id="main-menu-cot">
     <ul class="nav nav-pills nav-stacked" role="tablist">
-        <li role="presentation" class="active"><a href="javascript:;"><span class="glyphicon glyphicon-chevron-right"></span>列表1</a></li>
-        <li role="presentation"><a href="javascript:;"><span class="glyphicon glyphicon-chevron-right"></span> 列表2</a></li>
-        <li role="presentation"><a href="javascript:;"><span class="glyphicon glyphicon-chevron-right"></span> 列表3</a></li>
+        <li role="presentation" class="active query_store_storage"><a href="#list#query_store_storage"><span class="glyphicon glyphicon-chevron-right"></span>门店入库信息</a></li>
+        <li role="presentation" class="query_storage"><a href="#list#query_storage"><span class="glyphicon glyphicon-chevron-right"></span> 入库信息</a></li>
+        <li role="presentation" class="query_ppp_storage"><a href="#list#query_ppp_storage"><span class="glyphicon glyphicon-chevron-right"></span> 半成品入库信息</a></li>
+        <li role="presentation" class="query_ppp_outgoing"><a href="#list#query_ppp_outgoing"><span class="glyphicon glyphicon-chevron-right"></span> 半成品出库信息</a></li>
+        <li role="presentation" class="query_department_allocation"><a href="#list#query_department_allocation"><span class="glyphicon glyphicon-chevron-right"></span> 部门调拨信息</a></li>
+        <li role="presentation" class="query_distribution_allocation"><a href="#list#query_distribution_allocation"><span class="glyphicon glyphicon-chevron-right"></span> 配送出库信息</a></li>
     </ul>
 </div>
 <div class="main-wrap list-container">
-    <form class="js-query-form">
+    <form class="js-query-form" style="display: none">
         <div class="query-opts ">
             <div class="query-group dsib">
                 <input type="text" class="form-control w-9" id="applyTime" name="applyTime" value="" placeholder="搜索关键字"/>
@@ -59,22 +62,11 @@
     </form>
     <div class="table-wrap auto">
             <table class="main-table">
-                <thead>
-                <tr>
-                    <th style="min-width: 8rem">时间</th>
-                    <th style="width: 10rem;">操作</th>
-                </tr>
+                <thead class="js-data-list-header">
+
                 </thead>
                 <tbody class="js-data-list-cot">
-                <tr>
 
-                    <td >
-12133
-                    </td>
-                    <td>
-131313
-                    </td>
-                </tr>
                 </tbody>
             </table>
             <div class="pagination-cot-wrap">
@@ -82,3 +74,20 @@
             </div>
         </div>
 </div>
+<!--门店入库信息-->
+<script type="text/template" id="table-header-tpl">
+    <tr>
+        <@_.each(obj.columns,function(key){@>
+            <th><@-(headerMap[key]||"-")@></th>
+        <@})@>
+    </tr>
+</script>
+<script type="text/template" id="table-body-tpl">
+    <@_.each(obj.dataList,function(trData){@>
+    <tr>
+        <@_.each(trData,function(val){@>
+        <td><@-(val||"-")@></td>
+        <@})@>
+    </tr>
+    <@})@>
+</script>

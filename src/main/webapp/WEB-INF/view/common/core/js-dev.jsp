@@ -75,10 +75,13 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             version: version,
             role:"${sessionScope.customerInfo.role}",
             event: _.extend({}, Backbone.Events),
-            receiveMessage:function(event){
-                var eventData = event.data.split("?"),
-                    param = eventData[1] && rs.util.parseUrlParam(eventData[1]);
-                rs.event.trigger(eventData[0],param);
+            makeSpinner : function(){
+                return  new Spinner({
+                    color: "#fff",
+                    shadow: false,
+                    lines: 10,
+                    width: 4
+                })
             },
             JST: {},
             chartCommonOptions:{
@@ -103,6 +106,29 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             data: {
                 app: {},
                 page: {}
+            }
+        };
+        rs.toggleSpinning = function (dom, status,cb) {
+            var spinner,throttle = $(dom).data("throttle");
+            if (status === "loading") {
+                if(throttle){
+                    spinner = $(dom).data("spinner");
+                    spinner && (spinner.stop(),$(dom).removeData("spinner").removeData("throttle"));
+                }
+                $(dom).data("throttle",_.throttle(function (dom, status,cb) {
+                    if(status === "loading"){
+                        spinner = rs.makeSpinner();
+                        spinner.spin(dom);
+                        $(dom).data("spinner",spinner).addClass("loading");
+                    }else{
+                        spinner = $(dom).removeClass("loading").data("spinner");
+                        spinner && (spinner.stop(),$(dom).removeData("spinner").removeData("throttle"));
+                    }
+                    cb && cb();
+                },300));
+                $(dom).data("throttle")(dom, status,cb);
+            } else {
+                throttle && throttle(dom, status,cb);
             }
         };
         /**

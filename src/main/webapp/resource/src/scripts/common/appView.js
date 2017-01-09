@@ -70,9 +70,9 @@
 		},
 		startQuery:function(prams){
 			this.currentPrams = prams;
-			this.queryListHtml();
+			this.queryList();
 		},
-		queryListHtml:function(){
+		queryList:function(){
 			rs.mainApp.toggleSpinning(this.$(".table-wrap")[0],"loading");
 			//rs.mainApp.spinner.spin(this.$(".table-wrap")[0]);
 			$.when(this.send()).then(
