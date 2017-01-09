@@ -433,16 +433,16 @@ public class IndexController extends Controller {
      */
     public void query_store_storage(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
@@ -485,16 +485,16 @@ public class IndexController extends Controller {
      */
     public void query_storage(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
@@ -538,16 +538,16 @@ public class IndexController extends Controller {
      */
     public void query_ppp_storage(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
@@ -590,16 +590,16 @@ public class IndexController extends Controller {
      */
     public void query_ppp_outgoing(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
@@ -643,16 +643,16 @@ public class IndexController extends Controller {
      */
     public void query_department_allocation(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
@@ -695,16 +695,16 @@ public class IndexController extends Controller {
      */
     public void query_distribution_allocation(){
         int pageNumber;
-        if(getParaToInt("pn")==null){
+        if(getParaToInt("pageNumber")==null){
             pageNumber=1;
         }else{
-            pageNumber=getParaToInt("pn");
+            pageNumber=getParaToInt("pageNumber");
         } //前端通过pn传参
         int pageSize;           //指定每一页的显示数量
-        if(getParaToInt("ps")==null){
+        if(getParaToInt("pageSize")==null){
             pageSize=10;
         }else{
-            pageSize=getParaToInt("ps");
+            pageSize=getParaToInt("pageSize");
         }  //对一
 
         String materiel_type = getPara("materiel_types");
