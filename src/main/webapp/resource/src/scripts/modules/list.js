@@ -93,13 +93,13 @@
             var
                 pages = data.pages,
                 list = pages.list || [{}],
-                columnNames = list[0].columnNames||[],
+                columnNames = (list[0]||{}).columnNames||[],
                 dataList = _.pluck(list,"columnValues");
             if(isChangeType){
                 this.renderSearchParams(data.params);
             }
             this.renderListHeader(columnNames);
-            this.renderListBody(dataList);
+            this.renderListBody(dataList,columnNames);
 
             this.paginationView.set({totalCount:pages.totalRow});
 
@@ -110,9 +110,10 @@
                 columns:columnNames
             }));
         },
-        renderListBody:function (dataList) {
+        renderListBody:function (dataList,columnNames) {
             this.$(".js-data-list-cot").html(this.tableTpl.body({
-                dataList:dataList
+                dataList:dataList,
+                columnLen:columnNames.length
             }));
         },
         renderSearchParams:function (params) {

@@ -40,7 +40,7 @@ document.querySelector(".layout").style.height = (Math.max(document.body.clientH
             escape: /<@-([\s\S]+?)@>/g
         };
         // Set configuration
-        var version = "0.1.6";
+        var version = "0.1.001";
         seajs.config({
             alias: {
                 "ui": "common/ui",

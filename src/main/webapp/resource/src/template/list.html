@@ -90,6 +90,11 @@
         <@})@>
     </tr>
     <@})@>
+    <@if(!obj.dataList || !obj.dataList.length){@>
+    <tr>
+        <td rowspan="<@=obj.columnLen@>">没有符合条件的数据</td>
+    </tr>
+    <@}@>
 </script>
 
 <script type="text/template" id="search-param-tpl">
